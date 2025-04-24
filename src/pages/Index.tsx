@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Project, ProjectType, ProjectStatus } from '@/types/project';
 import { ProjectCard } from '@/components/ProjectCard';
@@ -121,11 +122,8 @@ const Index = () => {
     deleteProjectMutation.mutate(id);
   };
 
-  const projectsByType = PROJECT_TYPES.reduce((acc, type) => {
-    acc[type] = projects.filter((p) => p.type === type);
-    return acc;
-  }, {} as Record<ProjectType, Project[]>);
-
+  // Remove the projectsByType variable since we no longer need it
+  
   const sortedProjects = projects?.sort((a, b) => 
     a.dueDate.getTime() - b.dueDate.getTime()
   ) || [];
