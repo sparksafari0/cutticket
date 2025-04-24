@@ -1,7 +1,5 @@
-
 import { useState } from 'react';
 import { Project, ProjectType, ProjectStatus } from '@/types/project';
-import { PROJECT_TYPES } from '@/utils/constants';
 import { ProjectCard } from '@/components/ProjectCard';
 import { ProjectForm } from '@/components/ProjectForm';
 import { Button } from '@/components/ui/button';
@@ -128,6 +126,10 @@ const Index = () => {
     return acc;
   }, {} as Record<ProjectType, Project[]>);
 
+  const sortedProjects = projects?.sort((a, b) => 
+    a.dueDate.getTime() - b.dueDate.getTime()
+  ) || [];
+
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
   }
@@ -143,21 +145,14 @@ const Index = () => {
           </Button>
         </div>
 
-        <div className="space-y-6">
-          {PROJECT_TYPES.map((type) => (
-            <div key={type}>
-              <h2 className="text-lg font-semibold mb-3 capitalize">{type}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {projectsByType[type]?.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onEdit={handleEditProject}
-                    onDelete={handleDeleteProject}
-                  />
-                ))}
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedProjects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onEdit={handleEditProject}
+              onDelete={handleDeleteProject}
+            />
           ))}
         </div>
 

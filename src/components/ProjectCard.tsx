@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { Project } from '@/types/project';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { cn } from '@/lib/utils';
-import { Calendar, Edit, Trash2 } from 'lucide-react';
+import { Calendar, Edit, Trash2, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -33,7 +33,10 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
             {status?.label}
           </div>
         </div>
-        <p className="text-sm text-muted-foreground capitalize">{project.type}</p>
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Tag className="mr-2 h-4 w-4" />
+          <span className="capitalize">{project.type}</span>
+        </div>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center text-sm text-muted-foreground">
