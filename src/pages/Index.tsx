@@ -121,8 +121,6 @@ const Index = () => {
   const handleDeleteProject = (id: string) => {
     deleteProjectMutation.mutate(id);
   };
-
-  // Remove the projectsByType variable since we no longer need it
   
   const sortedProjects = projects?.sort((a, b) => 
     a.dueDate.getTime() - b.dueDate.getTime()
@@ -137,7 +135,7 @@ const Index = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Production Tracker</h1>
-          <Button onClick={() => setIsFormOpen(true)}>
+          <Button onClick={() => setIsFormOpen(true)} className="pointer-events-auto">
             <Plus className="h-4 w-4 mr-2" />
             Add Project
           </Button>

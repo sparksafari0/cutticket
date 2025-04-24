@@ -43,6 +43,11 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
     },
   });
 
+  const handleFormSubmit = (data: ProjectFormValues) => {
+    console.log("Form submitted with data:", data);
+    onSubmit(data);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -53,7 +58,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="title"
@@ -85,7 +90,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               )}
             />
             <div className="flex justify-end pt-2">
-              <Button type="submit">
+              <Button type="submit" className="pointer-events-auto">
                 {initialData ? 'Update Project' : 'Add Project'}
               </Button>
             </div>

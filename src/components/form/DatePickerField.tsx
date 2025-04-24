@@ -37,7 +37,7 @@ export const DatePickerField = ({ form }: DatePickerFieldProps) => {
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full pl-3 text-left font-normal",
+                    "w-full pl-3 text-left font-normal pointer-events-auto",
                     !field.value && "text-muted-foreground"
                   )}
                 >
@@ -50,13 +50,13 @@ export const DatePickerField = ({ form }: DatePickerFieldProps) => {
                 </Button>
               </FormControl>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent align="start" className="p-0 pointer-events-auto">
               <Calendar
                 mode="single"
                 selected={field.value}
                 onSelect={field.onChange}
                 initialFocus
-                className="p-3"
+                className="border-0"
               />
             </PopoverContent>
           </Popover>
