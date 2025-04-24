@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -47,6 +48,9 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{initialData ? 'Edit Project' : 'Add New Project'}</DialogTitle>
+          <DialogDescription>
+            {initialData ? 'Edit the details of your project below.' : 'Fill in the details for your new project.'}
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -80,7 +84,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
                 </FormItem>
               )}
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-2">
               <Button type="submit">
                 {initialData ? 'Update Project' : 'Add Project'}
               </Button>
