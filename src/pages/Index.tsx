@@ -1,171 +1,19 @@
 
-import { useState, useEffect } from 'react';
-import { Project, ProjectType, ProjectStatus } from '@/types/project';
-import { ProjectCard } from '@/components/ProjectCard';
-import { ProjectForm } from '@/components/ProjectForm';
+import { useState } from 'react';
+import { Project } from '@/types/project';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fromSupabaseProject, toSupabaseProject } from '@/types/supabaseTypes';
+import { ProjectForm } from '@/components/ProjectForm';
+import { ProjectList } from '@/components/ProjectList';
+import { useProjects } from '@/hooks/useProjects';
 
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
-  const [localProjects, setLocalProjects] = useState<Project[]>([]);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  // Fetch projects
-  const { data: projects = [], isLoading } = useQuery({
-    queryKey: ['projects'],
-    queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('projects')
-          .select('*')
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-        
-        // Convert Supabase projects to our Project type
-        return data ? data.map(fromSupabaseProject) : [];
-      } catch (error) {
-        console.error("Error fetching projects:", error);
-        return [];
-      }
-    }
-  });
-
-  // Update local projects state when data is fetched
-  useEffect(() => {
-    if (projects && projects.length > 0) {
-      setLocalProjects(projects);
-    }
-  }, [projects]);
-
-  // Add project mutation
-  const addProjectMutation = useMutation({
-    mutationFn: async (data: Partial<Project>) => {
-      try {
-        // Convert our Project type to Supabase format
-        const supabaseData = toSupabaseProject(data);
-        
-        const { error } = await supabase
-          .from('projects')
-          .insert(supabaseData);
-        
-        if (error) throw error;
-      } catch (error) {
-        console.error("Error adding project to Supabase:", error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      setIsFormOpen(false);
-      toast({
-        title: "Success",
-        description: "Project added successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Note",
-        description: "Project stored locally. Connect to Supabase for cloud storage.",
-      });
-    }
-  });
-
-  // Update project mutation
-  const updateProjectMutation = useMutation({
-    mutationFn: async (data: Partial<Project>) => {
-      if (!editingProject?.id) return;
-      try {
-        // Convert our Project type to Supabase format with validation
-        const supabaseData = toSupabaseProject(data);
-        
-        const { error } = await supabase
-          .from('projects')
-          .update(supabaseData)
-          .eq('id', editingProject.id);
-          
-        if (error) throw error;
-      } catch (error) {
-        console.error("Error updating project in Supabase:", error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      setIsFormOpen(false);
-      setEditingProject(undefined);
-      toast({
-        title: "Success",
-        description: "Project updated successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Note",
-        description: "Project updated locally. Connect to Supabase for cloud storage.",
-      });
-    }
-  });
-
-  // Delete project mutation
-  const deleteProjectMutation = useMutation({
-    mutationFn: async (id: string) => {
-      try {
-        const { error } = await supabase
-          .from('projects')
-          .delete()
-          .eq('id', id);
-        if (error) throw error;
-      } catch (error) {
-        console.error("Error deleting project from Supabase:", error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast({
-        title: "Success",
-        description: "Project deleted successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Note",
-        description: "Project deleted locally. Connect to Supabase for cloud storage.",
-      });
-    }
-  });
+  const { projects, isLoading, addProject, updateProject, deleteProject } = useProjects();
 
   const handleAddProject = (data: Partial<Project>) => {
-    // Create a new project with local ID
-    const newProject: Project = {
-      id: `local-${Date.now()}`,
-      title: data.title || 'Untitled Project',
-      type: data.type || 'productions',
-      status: data.status || 'not_started',
-      dueDate: data.dueDate || new Date(),
-      notes: data.notes || '',
-      createdAt: new Date()
-    };
-    
-    // Add to local state first
-    setLocalProjects(prev => [newProject, ...prev]);
-    
-    // Try to add to Supabase
-    try {
-      addProjectMutation.mutate(data);
-    } catch (error) {
-      console.log("Continuing with local storage only");
-    }
-    
-    // Close form regardless of Supabase result
+    addProject.mutate(data);
     setIsFormOpen(false);
   };
 
@@ -176,39 +24,14 @@ const Index = () => {
 
   const handleUpdateProject = (data: Partial<Project>) => {
     if (!editingProject) return;
-    
-    // Update in local state first
-    setLocalProjects(prev => 
-      prev.map(p => p.id === editingProject.id ? { ...p, ...data } as Project : p)
-    );
-    
-    // Try to update in Supabase
-    try {
-      updateProjectMutation.mutate(data);
-    } catch (error) {
-      console.log("Continuing with local storage only");
-    }
-    
-    // Close form regardless
+    updateProject.mutate({ ...data, id: editingProject.id });
     setIsFormOpen(false);
     setEditingProject(undefined);
   };
 
   const handleDeleteProject = (id: string) => {
-    // Delete from local state first
-    setLocalProjects(prev => prev.filter(p => p.id !== id));
-    
-    // Try to delete from Supabase
-    try {
-      deleteProjectMutation.mutate(id);
-    } catch (error) {
-      console.log("Continuing with local storage only");
-    }
+    deleteProject.mutate(id);
   };
-  
-  const sortedProjects = localProjects?.sort((a, b) => 
-    a.dueDate.getTime() - b.dueDate.getTime()
-  ) || [];
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
@@ -221,7 +44,7 @@ const Index = () => {
           </Button>
         </div>
 
-        {sortedProjects.length === 0 && !isLoading && (
+        {projects.length === 0 && !isLoading && (
           <div className="text-center py-8">
             <p className="text-lg text-gray-500 mb-4">No projects yet</p>
             <Button onClick={() => setIsFormOpen(true)} variant="outline" className="pointer-events-auto">
@@ -230,16 +53,11 @@ const Index = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sortedProjects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onEdit={handleEditProject}
-              onDelete={handleDeleteProject}
-            />
-          ))}
-        </div>
+        <ProjectList
+          projects={projects}
+          onEdit={handleEditProject}
+          onDelete={handleDeleteProject}
+        />
 
         <ProjectForm
           open={isFormOpen}
