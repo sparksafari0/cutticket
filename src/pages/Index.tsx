@@ -53,12 +53,11 @@ const Index = () => {
         
         const { error } = await supabase
           .from('projects')
-          .insert([supabaseData]);
+          .insert(supabaseData);
         
         if (error) throw error;
       } catch (error) {
         console.error("Error adding project to Supabase:", error);
-        // Even if Supabase fails, we'll add to local state
         throw error;
       }
     },
@@ -71,7 +70,6 @@ const Index = () => {
       });
     },
     onError: () => {
-      // Handle local state addition on error
       toast({
         title: "Note",
         description: "Project stored locally. Connect to Supabase for cloud storage.",
@@ -84,7 +82,7 @@ const Index = () => {
     mutationFn: async (data: Partial<Project>) => {
       if (!editingProject?.id) return;
       try {
-        // Convert our Project type to Supabase format
+        // Convert our Project type to Supabase format with validation
         const supabaseData = toSupabaseProject(data);
         
         const { error } = await supabase
@@ -108,7 +106,6 @@ const Index = () => {
       });
     },
     onError: () => {
-      // Handle local update
       toast({
         title: "Note",
         description: "Project updated locally. Connect to Supabase for cloud storage.",
@@ -138,7 +135,6 @@ const Index = () => {
       });
     },
     onError: () => {
-      // Handle local delete
       toast({
         title: "Note",
         description: "Project deleted locally. Connect to Supabase for cloud storage.",

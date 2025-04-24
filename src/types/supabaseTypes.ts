@@ -13,14 +13,30 @@ export interface SupabaseProject {
   updated_at: string;
 }
 
+// Required fields for insert operations
+export interface SupabaseProjectInsert {
+  title: string;
+  type: string;
+  status: string;
+  due_date: string;
+  notes?: string | null;
+}
+
 // Converter functions between local Project type and Supabase type
-export const toSupabaseProject = (project: Partial<Project>): Partial<SupabaseProject> => ({
-  title: project.title,
-  type: project.type,
-  status: project.status,
-  due_date: project.dueDate?.toISOString(),
-  notes: project.notes
-});
+export const toSupabaseProject = (project: Partial<Project>): SupabaseProjectInsert => {
+  // Make sure required fields are present
+  if (!project.title || !project.type || !project.status || !project.dueDate) {
+    throw new Error('Missing required fields for project');
+  }
+  
+  return {
+    title: project.title,
+    type: project.type,
+    status: project.status,
+    due_date: project.dueDate.toISOString(),
+    notes: project.notes || null
+  };
+};
 
 export const fromSupabaseProject = (project: SupabaseProject): Project => ({
   id: project.id,
