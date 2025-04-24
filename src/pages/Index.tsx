@@ -40,12 +40,14 @@ const Index = () => {
         return [];
       }
     },
-    onSuccess: (data) => {
-      if (data.length > 0) {
-        setLocalProjects(data);
-      }
-    }
   });
+
+  // Update local projects state when data is fetched
+  useEffect(() => {
+    if (projects && projects.length > 0) {
+      setLocalProjects(projects);
+    }
+  }, [projects]);
 
   // Add project mutation
   const addProjectMutation = useMutation({
