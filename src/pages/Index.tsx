@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { Project, ProjectType } from '@/types/project';
+import { useState } from 'react';
+import { Project, ProjectType, ProjectStatus } from '@/types/project';
 import { PROJECT_TYPES } from '@/utils/constants';
 import { ProjectCard } from '@/components/ProjectCard';
 import { ProjectForm } from '@/components/ProjectForm';
@@ -28,6 +28,9 @@ const Index = () => {
       if (error) throw error;
       return data.map(project => ({
         ...project,
+        // Convert string types from database to proper enum types for TypeScript
+        type: project.type as ProjectType,
+        status: project.status as ProjectStatus,
         dueDate: new Date(project.due_date),
         createdAt: new Date(project.created_at)
       }));
