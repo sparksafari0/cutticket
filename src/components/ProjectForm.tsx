@@ -23,6 +23,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { projectFormSchema, ProjectFormValues } from '@/schemas/projectSchema';
 import { DatePickerField } from './form/DatePickerField';
 import { ProjectSelectFields } from './form/ProjectSelectFields';
+import { useEffect } from 'react';
 
 interface ProjectFormProps {
   open: boolean;
@@ -34,7 +35,7 @@ interface ProjectFormProps {
 export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: ProjectFormProps) => {
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
-    defaultValues: initialData || {
+    defaultValues: {
       title: '',
       type: 'productions',
       status: 'not_started',
@@ -42,6 +43,29 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
       dueDate: new Date(),
     },
   });
+  
+  // Reset form with initialData when it changes or when the dialog opens
+  useEffect(() => {
+    if (initialData && open) {
+      console.log("Setting form values with initialData:", initialData);
+      form.reset({
+        title: initialData.title,
+        type: initialData.type,
+        status: initialData.status,
+        dueDate: initialData.dueDate,
+        notes: initialData.notes || '',
+      });
+    } else if (!initialData && open) {
+      // Reset to defaults when adding new project
+      form.reset({
+        title: '',
+        type: 'productions',
+        status: 'not_started',
+        notes: '',
+        dueDate: new Date(),
+      });
+    }
+  }, [initialData, open, form]);
 
   const handleFormSubmit = (data: ProjectFormValues) => {
     console.log("Form submitted with data:", data);

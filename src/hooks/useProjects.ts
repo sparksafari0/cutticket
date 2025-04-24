@@ -49,13 +49,22 @@ export function useProjects() {
   const updateProject = useMutation({
     mutationFn: async (data: Partial<Project>) => {
       if (!data.id) return;
+      
+      // Convert to Supabase format
       const supabaseData = toSupabaseProject(data);
+      
+      console.log("Updating project with ID:", data.id);
+      console.log("Update data:", supabaseData);
+      
       const { error } = await supabase
         .from('projects')
         .update(supabaseData)
         .eq('id', data.id);
         
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase update error:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
@@ -64,7 +73,8 @@ export function useProjects() {
         description: "Project updated successfully",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Update mutation error:", error);
       toast({
         title: "Note",
         description: "Project updated locally. Connect to Supabase for cloud storage.",
