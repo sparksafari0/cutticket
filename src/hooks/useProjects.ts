@@ -3,10 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from '@/types/project';
 import { fromSupabaseProject, toSupabaseProject } from '@/types/supabaseTypes';
-import { useToast } from "@/components/ui/use-toast";
 
 export function useProjects() {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const { data: projects = [], isLoading } = useQuery({
@@ -33,26 +31,13 @@ export function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast({
-        title: "Success",
-        description: "Project added successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Note",
-        description: "Project stored locally. Connect to Supabase for cloud storage.",
-      });
     }
   });
 
   const updateProject = useMutation({
     mutationFn: async (data: Partial<Project>) => {
       if (!data.id) return;
-      
-      // Convert to Supabase format
       const supabaseData = toSupabaseProject(data);
-      
       console.log("Updating project with ID:", data.id);
       console.log("Update data:", supabaseData);
       
@@ -68,17 +53,6 @@ export function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast({
-        title: "Success",
-        description: "Project updated successfully",
-      });
-    },
-    onError: (error) => {
-      console.error("Update mutation error:", error);
-      toast({
-        title: "Note",
-        description: "Project updated locally. Connect to Supabase for cloud storage.",
-      });
     }
   });
 
@@ -92,16 +66,6 @@ export function useProjects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast({
-        title: "Success",
-        description: "Project deleted successfully",
-      });
-    },
-    onError: () => {
-      toast({
-        title: "Note",
-        description: "Project deleted locally. Connect to Supabase for cloud storage.",
-      });
     }
   });
 
