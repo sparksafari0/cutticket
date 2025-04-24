@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Project, ProjectType, ProjectStatus } from '@/types/project';
 import { ProjectCard } from '@/components/ProjectCard';
@@ -8,6 +7,7 @@ import { Plus } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { fromSupabaseProject, toSupabaseProject } from '@/types/supabaseTypes';
 
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -27,14 +27,9 @@ const Index = () => {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        return data.map(project => ({
-          ...project,
-          // Convert string types from database to proper enum types for TypeScript
-          type: project.type as ProjectType,
-          status: project.status as ProjectStatus,
-          dueDate: new Date(project.due_date),
-          createdAt: new Date(project.created_at)
-        }));
+        
+        // Convert Supabase projects to our Project type
+        return data ? data.map(fromSupabaseProject) : [];
       } catch (error) {
         console.error("Error fetching projects:", error);
         return [];
@@ -53,15 +48,12 @@ const Index = () => {
   const addProjectMutation = useMutation({
     mutationFn: async (data: Partial<Project>) => {
       try {
+        // Convert our Project type to Supabase format
+        const supabaseData = toSupabaseProject(data);
+        
         const { error } = await supabase
           .from('projects')
-          .insert([{
-            title: data.title,
-            type: data.type,
-            status: data.status,
-            due_date: data.dueDate?.toISOString(),
-            notes: data.notes
-          }]);
+          .insert([supabaseData]);
         
         if (error) throw error;
       } catch (error) {
@@ -92,16 +84,14 @@ const Index = () => {
     mutationFn: async (data: Partial<Project>) => {
       if (!editingProject?.id) return;
       try {
+        // Convert our Project type to Supabase format
+        const supabaseData = toSupabaseProject(data);
+        
         const { error } = await supabase
           .from('projects')
-          .update({
-            title: data.title,
-            type: data.type,
-            status: data.status,
-            due_date: data.dueDate?.toISOString(),
-            notes: data.notes
-          })
+          .update(supabaseData)
           .eq('id', editingProject.id);
+          
         if (error) throw error;
       } catch (error) {
         console.error("Error updating project in Supabase:", error);
