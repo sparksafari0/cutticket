@@ -39,7 +39,7 @@ const Index = () => {
         console.error("Error fetching projects:", error);
         return [];
       }
-    },
+    }
   });
 
   // Update local projects state when data is fetched
