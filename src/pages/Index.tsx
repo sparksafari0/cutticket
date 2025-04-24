@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Project, ProjectType } from '@/types/project';
 import { PROJECT_TYPES } from '@/utils/constants';
 import { ProjectCard } from '@/components/ProjectCard';
@@ -7,26 +7,104 @@ import { ProjectForm } from '@/components/ProjectForm';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 const Index = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Fetch projects
+  const { data: projects = [], isLoading } = useQuery({
+    queryKey: ['projects'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data.map(project => ({
+        ...project,
+        dueDate: new Date(project.due_date),
+        createdAt: new Date(project.created_at)
+      }));
+    }
+  });
+
+  // Add project mutation
+  const addProjectMutation = useMutation({
+    mutationFn: async (data: Partial<Project>) => {
+      const { error } = await supabase
+        .from('projects')
+        .insert([{
+          title: data.title,
+          type: data.type,
+          status: data.status,
+          due_date: data.dueDate?.toISOString(),
+          notes: data.notes
+        }]);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      setIsFormOpen(false);
+      toast({
+        title: "Success",
+        description: "Project added successfully",
+      });
+    }
+  });
+
+  // Update project mutation
+  const updateProjectMutation = useMutation({
+    mutationFn: async (data: Partial<Project>) => {
+      if (!editingProject?.id) return;
+      const { error } = await supabase
+        .from('projects')
+        .update({
+          title: data.title,
+          type: data.type,
+          status: data.status,
+          due_date: data.dueDate?.toISOString(),
+          notes: data.notes
+        })
+        .eq('id', editingProject.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      setIsFormOpen(false);
+      setEditingProject(undefined);
+      toast({
+        title: "Success",
+        description: "Project updated successfully",
+      });
+    }
+  });
+
+  // Delete project mutation
+  const deleteProjectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      toast({
+        title: "Success",
+        description: "Project deleted successfully",
+      });
+    }
+  });
 
   const handleAddProject = (data: Partial<Project>) => {
-    const newProject = {
-      ...data,
-      id: Math.random().toString(),
-      createdAt: new Date(),
-    } as Project;
-
-    setProjects([...projects, newProject]);
-    setIsFormOpen(false);
-    toast({
-      title: "Success",
-      description: "Project added successfully",
-    });
+    addProjectMutation.mutate(data);
   };
 
   const handleEditProject = (project: Project) => {
@@ -35,33 +113,21 @@ const Index = () => {
   };
 
   const handleUpdateProject = (data: Partial<Project>) => {
-    if (!editingProject) return;
-
-    const updatedProjects = projects.map((p) =>
-      p.id === editingProject.id ? { ...editingProject, ...data } : p
-    );
-
-    setProjects(updatedProjects);
-    setIsFormOpen(false);
-    setEditingProject(undefined);
-    toast({
-      title: "Success",
-      description: "Project updated successfully",
-    });
+    updateProjectMutation.mutate(data);
   };
 
   const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter((p) => p.id !== id));
-    toast({
-      title: "Success",
-      description: "Project deleted successfully",
-    });
+    deleteProjectMutation.mutate(id);
   };
 
   const projectsByType = PROJECT_TYPES.reduce((acc, type) => {
     acc[type] = projects.filter((p) => p.type === type);
     return acc;
   }, {} as Record<ProjectType, Project[]>);
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
