@@ -2,13 +2,14 @@
 import { format } from 'date-fns';
 import { Project } from '@/types/project';
 import { PROJECT_STATUSES } from '@/utils/constants';
-import { Edit, Trash2, Image } from 'lucide-react';
+import { Edit, Trash2, Image, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogClose
 } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -73,10 +74,14 @@ const ProjectDetailDialog = ({
     <>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-          <div className="fixed top-0 right-0 left-0 bg-background z-10 pt-6 pb-2">
-            <DialogHeader>
+          <div className="fixed top-0 right-0 left-0 bg-background z-10 pt-6 pb-2 px-6 flex items-center justify-between">
+            <DialogHeader className="p-0">
               <DialogTitle className="text-xl font-semibold">{project.title}</DialogTitle>
             </DialogHeader>
+            <DialogClose className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
           </div>
           
           <div className="space-y-4 mt-12">
@@ -118,13 +123,15 @@ const ProjectDetailDialog = ({
               <span>{format(project.dueDate, 'MMMM dd, yyyy')}</span>
             </div>
             
-            {/* Days Left */}
-            <div 
-              className="px-3 py-2 rounded-md text-center font-medium"
-              style={{ backgroundColor: bgColor }}
-            >
-              {daysLeftText}
-            </div>
+            {/* Days Left - Only show if project is not completed */}
+            {project.status !== 'completed' && (
+              <div 
+                className="px-3 py-2 rounded-md text-center font-medium"
+                style={{ backgroundColor: bgColor }}
+              >
+                {daysLeftText}
+              </div>
+            )}
             
             {/* Notes */}
             {project.notes && (
