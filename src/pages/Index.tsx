@@ -36,7 +36,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="sticky top-0 z-10 flex justify-between items-center mb-6 py-4 bg-gray-50">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Production Tracker</h1>
           <Button onClick={() => setIsFormOpen(true)} className="pointer-events-auto">
             <Plus className="h-4 w-4 mr-2" />
