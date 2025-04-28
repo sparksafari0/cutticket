@@ -84,13 +84,15 @@ export const ProjectCardContent = ({ project, onEdit, onDelete }: ProjectCardCon
           </div>
         </CardHeader>
         <CardContent className="space-y-1 py-0">
-          {/* Days left highlighted section */}
-          <div 
-            className="mt-2 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full"
-            style={{ backgroundColor: bgColor }}
-          >
-            {daysLeftText}
-          </div>
+          {/* Days left highlighted section - only show if project is not completed */}
+          {project.status !== 'completed' && (
+            <div 
+              className="mt-2 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full"
+              style={{ backgroundColor: bgColor }}
+            >
+              {daysLeftText}
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-end space-x-2">
           <ProjectCardActions 
