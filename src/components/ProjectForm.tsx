@@ -6,14 +6,7 @@ import {
 } from '@/components/ui/dialog';
 import {
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { projectFormSchema, ProjectFormValues } from '@/schemas/projectSchema';
@@ -24,6 +17,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ImageUploadField } from './form/ImageUploadField';
 import { ProjectFormHeader } from './form/ProjectFormHeader';
 import { ProjectFormActions } from './form/ProjectFormActions';
+import { TitleField } from './form/TitleField';
+import { NotesField } from './form/NotesField';
 
 interface ProjectFormProps {
   open: boolean;
@@ -98,37 +93,10 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
                 setImagePreview={setImagePreview} 
               />
 
-              {/* Title Field */}
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Project title" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
+              <TitleField form={form} />
               <ProjectSelectFields form={form} />
               <DatePickerField form={form} />
-              
-              <FormField
-                control={form.control}
-                name="notes"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Notes</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Add any notes here..." {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <NotesField form={form} />
               
               <ProjectFormActions initialData={initialData} />
             </form>
@@ -138,3 +106,4 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
     </Dialog>
   );
 };
+

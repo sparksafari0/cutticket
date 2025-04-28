@@ -1,5 +1,5 @@
 
-import { format } from 'date-fns';
+import { format, differenceInDays } from 'date-fns';
 import { Project } from '@/types/project';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,28 @@ interface ProjectCardProps {
 
 export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => {
   const status = PROJECT_STATUSES.find(s => s.value === project.status);
+  
+  // Calculate days left until due date
+  const today = new Date();
+  const daysLeft = differenceInDays(project.dueDate, today);
+  
+  // Set display text and style based on days left
+  let daysLeftText = '';
+  let bgColor = '#F1F0FB'; // Default light purple/gray
+  
+  if (daysLeft < 0) {
+    daysLeftText = `${Math.abs(daysLeft)} days overdue`;
+    bgColor = '#FFDEE2'; // Soft pink/red for overdue
+  } else if (daysLeft === 0) {
+    daysLeftText = 'Due today';
+    bgColor = '#FEF7CD'; // Soft yellow for due today
+  } else if (daysLeft === 1) {
+    daysLeftText = '1 day left';
+    bgColor = '#FEF7CD'; // Soft yellow for due soon
+  } else {
+    daysLeftText = `${daysLeft} days left`;
+    bgColor = '#F2FCE2'; // Soft green for plenty of time
+  }
 
   return (
     <Card className="w-full">
@@ -63,9 +85,14 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
               <Calendar className="mr-2 h-4 w-4" />
               Due: {format(project.dueDate, 'MMM dd, yyyy')}
             </div>
-            {project.notes && (
-              <p className="text-sm text-muted-foreground line-clamp-2">{project.notes}</p>
-            )}
+            
+            {/* Days left highlighted section (replacing notes) */}
+            <div 
+              className="mt-2 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center"
+              style={{ backgroundColor: bgColor }}
+            >
+              {daysLeftText}
+            </div>
           </CardContent>
           <CardFooter className="flex justify-end space-x-2">
             <Button variant="ghost" size="icon" onClick={() => onEdit(project)}>
@@ -80,3 +107,4 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
     </Card>
   );
 };
+
