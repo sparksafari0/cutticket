@@ -11,6 +11,7 @@ export interface SupabaseProject {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  image_url: string | null;
 }
 
 // Required fields for insert operations
@@ -20,6 +21,7 @@ export interface SupabaseProjectInsert {
   status: string;
   due_date: string;
   notes?: string | null;
+  image_url?: string | null;
 }
 
 // Converter functions between local Project type and Supabase type
@@ -34,7 +36,8 @@ export const toSupabaseProject = (project: Partial<Project>): SupabaseProjectIns
     type: project.type,
     status: project.status,
     due_date: project.dueDate.toISOString(),
-    notes: project.notes || null
+    notes: project.notes || null,
+    image_url: project.imageUrl || null
   };
 };
 
@@ -45,5 +48,6 @@ export const fromSupabaseProject = (project: SupabaseProject): Project => ({
   status: project.status as ProjectStatus,
   dueDate: new Date(project.due_date),
   notes: project.notes || '',
-  createdAt: new Date(project.created_at)
+  createdAt: new Date(project.created_at),
+  imageUrl: project.image_url || undefined
 });

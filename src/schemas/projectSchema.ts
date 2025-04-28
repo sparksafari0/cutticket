@@ -7,6 +7,7 @@ export const projectFormSchema = z.object({
   status: z.enum(['not_started', 'in_progress', 'review', 'completed'] as const),
   dueDate: z.date(),
   notes: z.string().optional(),
+  imageUrl: z.string().optional(),
 });
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;

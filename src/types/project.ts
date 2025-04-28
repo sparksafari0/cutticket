@@ -11,4 +11,5 @@ export interface Project {
   dueDate: Date;
   notes: string;
   createdAt: Date;
+  imageUrl?: string; // Added imageUrl field
 }
