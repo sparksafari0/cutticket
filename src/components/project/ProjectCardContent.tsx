@@ -78,13 +78,12 @@ export const ProjectCardContent = ({ project, onEdit, onDelete }: ProjectCardCon
             <Tag className="mr-2 h-4 w-4" />
             <span className="capitalize">{project.type}</span>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-1 py-0">
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="mr-2 h-4 w-4" />
             Due: {format(project.dueDate, 'MMM dd, yyyy')}
           </div>
-          
+        </CardHeader>
+        <CardContent className="space-y-1 py-0">
           {/* Days left highlighted section */}
           <div 
             className="mt-2 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full"
