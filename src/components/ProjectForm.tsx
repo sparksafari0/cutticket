@@ -26,7 +26,6 @@ import { ProjectSelectFields } from './form/ProjectSelectFields';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Image } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ProjectFormProps {
   open: boolean;
@@ -127,103 +126,99 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
-        <ScrollArea className="max-h-[90vh] overflow-y-auto">
-          <div className="p-6">
-            <DialogHeader>
-              <DialogTitle>{initialData ? 'Edit Project' : 'Add New Project'}</DialogTitle>
-              <DialogDescription>
-                {initialData ? 'Edit the details of your project below.' : 'Fill in the details for your new project.'}
-              </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4 mt-4">
-                {/* Image Upload Field - First field */}
-                <FormField
-                  control={form.control}
-                  name="imageUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Project Image (Optional)</FormLabel>
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="relative w-full h-40 bg-gray-100 border rounded-md flex items-center justify-center overflow-hidden">
-                          {imagePreview ? (
-                            <img 
-                              src={imagePreview} 
-                              alt="Project preview" 
-                              className="w-full h-full object-contain"
-                            />
-                          ) : (
-                            <div className="flex flex-col items-center justify-center text-gray-500">
-                              <Image className="h-10 w-10 mb-2" />
-                              <span>No image selected</span>
-                            </div>
-                          )}
-                        </div>
-                        <input
-                          type="file"
-                          id="image-upload"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleImageUpload}
-                          disabled={uploading}
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{initialData ? 'Edit Project' : 'Add New Project'}</DialogTitle>
+          <DialogDescription>
+            {initialData ? 'Edit the details of your project below.' : 'Fill in the details for your new project.'}
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+            {/* Image Upload Field - First field */}
+            <FormField
+              control={form.control}
+              name="imageUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Project Image (Optional)</FormLabel>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="relative w-full h-40 bg-gray-100 border rounded-md flex items-center justify-center overflow-hidden">
+                      {imagePreview ? (
+                        <img 
+                          src={imagePreview} 
+                          alt="Project preview" 
+                          className="w-full h-full object-contain"
                         />
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          onClick={() => document.getElementById('image-upload')?.click()}
-                          disabled={uploading}
-                          className="w-full"
-                        >
-                          {uploading ? 'Uploading...' : (imagePreview ? 'Change Image' : 'Upload Image')}
-                        </Button>
-                        <input type="hidden" {...field} />
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-gray-500">
+                          <Image className="h-10 w-10 mb-2" />
+                          <span>No image selected</span>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      id="image-upload"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                    />
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => document.getElementById('image-upload')?.click()}
+                      disabled={uploading}
+                      className="w-full"
+                    >
+                      {uploading ? 'Uploading...' : (imagePreview ? 'Change Image' : 'Upload Image')}
+                    </Button>
+                    <input type="hidden" {...field} />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                {/* Title Field */}
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Project title" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <ProjectSelectFields form={form} />
-                <DatePickerField form={form} />
-                
-                <FormField
-                  control={form.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Notes</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Add any notes here..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex justify-end pt-2 pb-2">
-                  <Button type="submit" className="pointer-events-auto">
-                    {initialData ? 'Update Project' : 'Add Project'}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </div>
-        </ScrollArea>
+            {/* Title Field */}
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Project title" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <ProjectSelectFields form={form} />
+            <DatePickerField form={form} />
+            
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Notes</FormLabel>
+                  <FormControl>
+                    <Textarea placeholder="Add any notes here..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="flex justify-end pt-2">
+              <Button type="submit" className="pointer-events-auto">
+                {initialData ? 'Update Project' : 'Add Project'}
+              </Button>
+            </div>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
