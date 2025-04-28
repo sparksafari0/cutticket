@@ -102,7 +102,7 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
                 <span className="capitalize">{project.type}</span>
               </div>
             </CardHeader>
-            <CardContent className="space-y-1 py-1">
+            <CardContent className="space-y-1 py-0"> {/* Changed py-1 to py-0 to reduce vertical space */}
               <div className="flex items-center text-sm text-muted-foreground">
                 <Calendar className="mr-2 h-4 w-4" />
                 Due: {format(project.dueDate, 'MMM dd, yyyy')}
@@ -110,7 +110,7 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
               
               {/* Days left highlighted section (replacing notes) */}
               <div 
-                className="mt-2 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center"
+                className="mt-2 px-3 py-2 rounded-md text-sm font-medium flex items-center justify-center w-full"
                 style={{ backgroundColor: bgColor }}
               >
                 {daysLeftText}
@@ -149,13 +149,13 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
           </DialogHeader>
           
           <div className="space-y-4 mt-2">
-            {/* Image */}
+            {/* Image - Fixed to contain instead of cover to show full image */}
             {project.imageUrl ? (
               <div className="w-full h-48 sm:h-64 relative rounded-md overflow-hidden">
                 <img 
                   src={project.imageUrl} 
                   alt={project.title} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             ) : (
@@ -234,3 +234,4 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
     </>
   );
 };
+
