@@ -11,6 +11,7 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 interface ProjectCardProps {
   project: Project;
@@ -66,10 +67,10 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
         {/* Content section on the right */}
         <div className="w-2/3">
           <CardHeader className="space-y-1">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">{project.title}</h3>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+              <h3 className="text-lg font-medium truncate max-w-[180px]">{project.title}</h3>
               <div 
-                className="px-2 py-1 rounded text-sm capitalize"
+                className="px-2 py-1 rounded text-sm capitalize whitespace-nowrap"
                 style={{ backgroundColor: status?.color }}
               >
                 {status?.label}
