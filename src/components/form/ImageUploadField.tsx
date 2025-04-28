@@ -1,6 +1,6 @@
 
-import { useState } from 'react';
-import { Image } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Image, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   FormControl,
@@ -12,6 +12,11 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { UseFormReturn } from 'react-hook-form';
 import { ProjectFormValues } from '@/schemas/projectSchema';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface ImageUploadFieldProps {
   form: UseFormReturn<ProjectFormValues>;
@@ -21,6 +26,8 @@ interface ImageUploadFieldProps {
 
 export const ImageUploadField = ({ form, imagePreview, setImagePreview }: ImageUploadFieldProps) => {
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -59,6 +66,14 @@ export const ImageUploadField = ({ form, imagePreview, setImagePreview }: ImageU
     }
   };
 
+  const triggerFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const triggerCameraCapture = () => {
+    cameraInputRef.current?.click();
+  };
+
   return (
     <FormField
       control={form.control}
@@ -81,23 +96,65 @@ export const ImageUploadField = ({ form, imagePreview, setImagePreview }: ImageU
                 </div>
               )}
             </div>
+            
+            {/* Hidden file inputs */}
             <input
               type="file"
               id="image-upload"
+              ref={fileInputRef}
               accept="image/*"
               className="hidden"
               onChange={handleImageUpload}
               disabled={uploading}
             />
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => document.getElementById('image-upload')?.click()}
+            <input
+              type="file"
+              id="camera-capture"
+              ref={cameraInputRef}
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handleImageUpload}
               disabled={uploading}
-              className="w-full"
-            >
-              {uploading ? 'Uploading...' : (imagePreview ? 'Change Image' : 'Upload Image')}
-            </Button>
+            />
+            
+            {/* Dropdown for image options */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  disabled={uploading}
+                  className="w-full"
+                >
+                  {uploading ? 'Uploading...' : (imagePreview ? 'Change Image' : 'Add Image')}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-2 bg-background">
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={triggerFileUpload}
+                    disabled={uploading}
+                    className="flex items-center gap-2"
+                  >
+                    <Upload size={16} />
+                    Upload Image
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={triggerCameraCapture}
+                    disabled={uploading}
+                    className="flex items-center gap-2"
+                  >
+                    <Camera size={16} />
+                    Take Photo
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
             <input type="hidden" {...field} />
           </div>
           <FormMessage />
