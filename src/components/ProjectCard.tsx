@@ -34,10 +34,10 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
     bgColor = '#FFDEE2'; // Soft pink/red for overdue
   } else if (daysLeft === 0) {
     daysLeftText = 'Due today';
-    bgColor = '#FEF7CD'; // Soft yellow for due today
+    bgColor = '#ea384c20'; // Redish color with transparency for due today
   } else if (daysLeft === 1) {
     daysLeftText = '1 day left';
-    bgColor = '#FEF7CD'; // Soft yellow for due soon
+    bgColor = '#F9731620'; // Orange color with transparency for 1 day left
   } else {
     daysLeftText = `${daysLeft} days left`;
     bgColor = '#F2FCE2'; // Soft green for plenty of time
@@ -80,7 +80,7 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
               <span className="capitalize">{project.type}</span>
             </div>
           </CardHeader>
-          <CardContent className="space-y-2 py-2">
+          <CardContent className="space-y-1 py-1">
             <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="mr-2 h-4 w-4" />
               Due: {format(project.dueDate, 'MMM dd, yyyy')}
@@ -107,4 +107,3 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
     </Card>
   );
 };
-
