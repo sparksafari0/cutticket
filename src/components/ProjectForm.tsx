@@ -1,12 +1,8 @@
 
 import { Project } from '@/types/project';
-import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -24,9 +20,10 @@ import { projectFormSchema, ProjectFormValues } from '@/schemas/projectSchema';
 import { DatePickerField } from './form/DatePickerField';
 import { ProjectSelectFields } from './form/ProjectSelectFields';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Image } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ImageUploadField } from './form/ImageUploadField';
+import { ProjectFormHeader } from './form/ProjectFormHeader';
+import { ProjectFormActions } from './form/ProjectFormActions';
 
 interface ProjectFormProps {
   open: boolean;
@@ -37,7 +34,6 @@ interface ProjectFormProps {
 
 export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: ProjectFormProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
@@ -83,43 +79,6 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
     }
   }, [initialData, open, form]);
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setUploading(true);
-      
-      // Create a unique file path
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-      const filePath = `project-images/${fileName}`;
-      
-      // Upload the file to Supabase Storage
-      const { error: uploadError, data } = await supabase.storage
-        .from('project-images')
-        .upload(filePath, file);
-      
-      if (uploadError) {
-        console.error('Error uploading image:', uploadError);
-        return;
-      }
-
-      // Get the public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('project-images')
-        .getPublicUrl(filePath);
-      
-      // Update the form
-      form.setValue('imageUrl', publicUrl);
-      setImagePreview(publicUrl);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleFormSubmit = (data: ProjectFormValues) => {
     console.log("Form submitted with data:", data);
     onSubmit(data);
@@ -128,60 +87,15 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
-        <DialogHeader className="px-6 pt-6">
-          <DialogTitle>{initialData ? 'Edit Project' : 'Add New Project'}</DialogTitle>
-          <DialogDescription>
-            {initialData ? 'Edit the details of your project below.' : 'Fill in the details for your new project.'}
-          </DialogDescription>
-        </DialogHeader>
+        <ProjectFormHeader initialData={initialData} />
         
         <ScrollArea className="px-6 pb-6 max-h-[calc(90vh-80px)]">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-              {/* Image Upload Field - First field */}
-              <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project Image (Optional)</FormLabel>
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="relative w-full h-40 bg-gray-100 border rounded-md flex items-center justify-center overflow-hidden">
-                        {imagePreview ? (
-                          <img 
-                            src={imagePreview} 
-                            alt="Project preview" 
-                            className="w-full h-full object-contain"
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center justify-center text-gray-500">
-                            <Image className="h-10 w-10 mb-2" />
-                            <span>No image selected</span>
-                          </div>
-                        )}
-                      </div>
-                      <input
-                        type="file"
-                        id="image-upload"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                        disabled={uploading}
-                      />
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => document.getElementById('image-upload')?.click()}
-                        disabled={uploading}
-                        className="w-full"
-                      >
-                        {uploading ? 'Uploading...' : (imagePreview ? 'Change Image' : 'Upload Image')}
-                      </Button>
-                      <input type="hidden" {...field} />
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
+              <ImageUploadField 
+                form={form} 
+                imagePreview={imagePreview} 
+                setImagePreview={setImagePreview} 
               />
 
               {/* Title Field */}
@@ -215,11 +129,8 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
                   </FormItem>
                 )}
               />
-              <div className="flex justify-end pt-2">
-                <Button type="submit" className="pointer-events-auto">
-                  {initialData ? 'Update Project' : 'Add Project'}
-                </Button>
-              </div>
+              
+              <ProjectFormActions initialData={initialData} />
             </form>
           </Form>
         </ScrollArea>

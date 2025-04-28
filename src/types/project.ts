@@ -1,7 +1,7 @@
 
 export type ProjectType = 'alterations' | 'samples' | 'productions' | 'other';
 
-export type ProjectStatus = 'not_started' | 'in_progress' | 'review' | 'completed';
+export type ProjectStatus = 'not_started' | 'in_progress' | 'completed';
 
 export interface Project {
   id: string;
