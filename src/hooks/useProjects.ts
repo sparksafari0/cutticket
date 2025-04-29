@@ -37,13 +37,29 @@ export function useProjects() {
   const updateProject = useMutation({
     mutationFn: async (data: Partial<Project>) => {
       if (!data.id) return;
-      const supabaseData = toSupabaseProject(data);
+      
+      // Create a minimal update object with only the fields being changed
+      const updateData: any = {};
+      
+      // Only include status if it's provided
+      if (data.status) {
+        updateData.status = data.status;
+      }
+      
+      // Add any other provided fields to update
+      if (data.title) updateData.title = data.title;
+      if (data.type) updateData.type = data.type;
+      if (data.dueDate) updateData.due_date = data.dueDate.toISOString();
+      if (data.notes !== undefined) updateData.notes = data.notes;
+      if (data.imageUrl !== undefined) updateData.image_url = data.imageUrl;
+      if (data.referencePhotos !== undefined) updateData.reference_photos = data.referencePhotos;
+      
       console.log("Updating project with ID:", data.id);
-      console.log("Update data:", supabaseData);
+      console.log("Update data:", updateData);
       
       const { error } = await supabase
         .from('projects')
-        .update(supabaseData)
+        .update(updateData)
         .eq('id', data.id);
         
       if (error) {
