@@ -39,6 +39,7 @@ const ProjectDetailDialog = ({
   onDelete 
 }: ProjectDetailDialogProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
   
   const status = PROJECT_STATUSES.find(s => s.value === project.status);
   
@@ -143,6 +144,28 @@ const ProjectDetailDialog = ({
               </div>
             )}
             
+            {/* Reference Photos */}
+            {project.referencePhotos && project.referencePhotos.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="font-medium">Reference Photos:</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {project.referencePhotos.map((photo, index) => (
+                    <div 
+                      key={index} 
+                      className="aspect-square bg-gray-100 rounded-md overflow-hidden cursor-pointer"
+                      onClick={() => setExpandedPhoto(photo)}
+                    >
+                      <img 
+                        src={photo} 
+                        alt={`Reference ${index + 1}`} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             {/* Action Buttons */}
             <div className="flex justify-end space-x-2 pt-4">
               <Button 
@@ -166,6 +189,24 @@ const ProjectDetailDialog = ({
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Photo Expanded View Dialog */}
+      {expandedPhoto && (
+        <Dialog open={!!expandedPhoto} onOpenChange={() => setExpandedPhoto(null)}>
+          <DialogContent className="sm:max-w-[700px] p-0">
+            <div className="p-1 relative">
+              <img
+                src={expandedPhoto}
+                alt="Reference"
+                className="w-full h-auto object-contain max-h-[80vh]"
+              />
+              <DialogClose className="absolute top-2 right-2 rounded-full bg-background/80 p-1">
+                <X className="h-4 w-4" />
+              </DialogClose>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

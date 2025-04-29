@@ -1,15 +1,12 @@
 
-export type ProjectType = 'alterations' | 'samples' | 'productions' | 'other';
-
-export type ProjectStatus = 'not_started' | 'in_progress' | 'completed';
-
 export interface Project {
   id: string;
   title: string;
-  type: ProjectType;
-  status: ProjectStatus;
+  type: 'productions' | 'series' | 'film' | 'commercial' | 'other';
+  status: 'not_started' | 'in_progress' | 'on_hold' | 'completed';
   dueDate: Date;
-  notes: string;
   createdAt: Date;
-  imageUrl?: string; // Added imageUrl field
+  notes?: string;
+  imageUrl?: string;
+  referencePhotos?: string[];
 }

@@ -19,6 +19,7 @@ import { ProjectFormHeader } from './form/ProjectFormHeader';
 import { ProjectFormActions } from './form/ProjectFormActions';
 import { TitleField } from './form/TitleField';
 import { NotesField } from './form/NotesField';
+import { ReferencePhotosField } from './form/ReferencePhotosField';
 
 interface ProjectFormProps {
   open: boolean;
@@ -39,6 +40,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
       notes: '',
       dueDate: new Date(),
       imageUrl: '',
+      referencePhotos: [],
     },
   });
   
@@ -53,6 +55,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
         dueDate: initialData.dueDate,
         notes: initialData.notes || '',
         imageUrl: initialData.imageUrl || '',
+        referencePhotos: initialData.referencePhotos || [],
       });
       
       if (initialData.imageUrl) {
@@ -69,6 +72,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
         notes: '',
         dueDate: new Date(),
         imageUrl: '',
+        referencePhotos: [],
       });
       setImagePreview(null);
     }
@@ -97,6 +101,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               <ProjectSelectFields form={form} />
               <DatePickerField form={form} />
               <NotesField form={form} />
+              <ReferencePhotosField form={form} />
               
               <ProjectFormActions initialData={initialData} />
             </form>
@@ -106,4 +111,3 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
     </Dialog>
   );
 };
-
