@@ -88,7 +88,7 @@ const ProjectDetailDialog = ({
           <div className="space-y-4 mt-12">
             {/* Image - Fixed to contain instead of cover to show full image */}
             {project.imageUrl ? (
-              <div className="w-full h-48 sm:h-64 relative rounded-md overflow-hidden">
+              <div className="w-full h-48 sm:h-64 relative rounded-md overflow-hidden cursor-pointer" onClick={() => setExpandedPhoto(project.imageUrl)}>
                 <img 
                   src={project.imageUrl} 
                   alt={project.title} 
