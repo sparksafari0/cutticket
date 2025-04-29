@@ -11,6 +11,5 @@ export interface Project {
   referencePhotos?: string[];
 }
 
-// Export these as named types to fix the TypeScript errors
 export type ProjectType = 'productions' | 'series' | 'film' | 'commercial' | 'alterations' | 'samples' | 'other';
 export type ProjectStatus = 'not_started' | 'in_progress' | 'on_hold' | 'completed';

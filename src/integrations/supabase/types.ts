@@ -16,6 +16,7 @@ export type Database = {
           id: string
           image_url: string | null
           notes: string | null
+          reference_photos: string[] | null
           status: string
           title: string
           type: string
@@ -27,6 +28,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           notes?: string | null
+          reference_photos?: string[] | null
           status: string
           title: string
           type: string
@@ -38,6 +40,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           notes?: string | null
+          reference_photos?: string[] | null
           status?: string
           title?: string
           type?: string
