@@ -11,5 +11,5 @@ export interface Project {
   referencePhotos?: string[];
 }
 
-export type ProjectType = 'productions' | 'series' | 'film' | 'commercial' | 'alterations' | 'samples' | 'other';
-export type ProjectStatus = 'not_started' | 'in_progress' | 'on_hold' | 'completed';
+export type ProjectType = 'productions' | 'samples' | 'alterations' | 'other';
+export type ProjectStatus = 'not_started' | 'in_progress' | 'completed';
