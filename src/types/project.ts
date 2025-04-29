@@ -2,8 +2,8 @@
 export interface Project {
   id: string;
   title: string;
-  type: 'productions' | 'series' | 'film' | 'commercial' | 'other';
-  status: 'not_started' | 'in_progress' | 'on_hold' | 'completed';
+  type: ProjectType;
+  status: ProjectStatus;
   dueDate: Date;
   createdAt: Date;
   notes?: string;
@@ -12,5 +12,5 @@ export interface Project {
 }
 
 // Export these as named types to fix the TypeScript errors
-export type ProjectType = 'productions' | 'series' | 'film' | 'commercial' | 'other';
+export type ProjectType = 'productions' | 'series' | 'film' | 'commercial' | 'alterations' | 'samples' | 'other';
 export type ProjectStatus = 'not_started' | 'in_progress' | 'on_hold' | 'completed';
