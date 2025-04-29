@@ -10,3 +10,7 @@ export interface Project {
   imageUrl?: string;
   referencePhotos?: string[];
 }
+
+// Export these as named types to fix the TypeScript errors
+export type ProjectType = 'productions' | 'series' | 'film' | 'commercial' | 'other';
+export type ProjectStatus = 'not_started' | 'in_progress' | 'on_hold' | 'completed';
