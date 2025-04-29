@@ -39,7 +39,8 @@ const ProjectDetailDialog = ({
     onEdit(project);
   };
   
-  const handleStatusChange = (status: typeof project.status) => {
+  const handleStatusChange = (status: Project['status']) => {
+    console.log("Status changing to:", status);
     updateProject.mutate({ 
       id: project.id, 
       status 

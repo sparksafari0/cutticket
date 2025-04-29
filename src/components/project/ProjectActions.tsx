@@ -36,31 +36,40 @@ const ProjectActions = ({
         Edit
       </Button>
       
-      <Select
-        value={status}
-        onValueChange={(value) => onStatusChange?.(value as ProjectStatus)}
-      >
-        <SelectTrigger 
-          className="w-[130px]"
-          style={{ backgroundColor: currentStatus?.color }}
+      <div className="z-50">
+        <Select
+          value={status}
+          onValueChange={(value) => {
+            if (onStatusChange) {
+              onStatusChange(value as ProjectStatus);
+            }
+          }}
         >
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          {PROJECT_STATUSES.map((statusOption) => (
-            <SelectItem 
-              key={statusOption.value} 
-              value={statusOption.value}
-              className="capitalize"
-              style={{
-                backgroundColor: status === statusOption.value ? statusOption.color : undefined
-              }}
-            >
-              {statusOption.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+          <SelectTrigger 
+            className="w-[130px]"
+            style={{ 
+              backgroundColor: currentStatus?.color || 'transparent',
+              color: 'black'
+            }}
+          >
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent className="z-50">
+            {PROJECT_STATUSES.map((statusOption) => (
+              <SelectItem 
+                key={statusOption.value} 
+                value={statusOption.value}
+                className="capitalize"
+                style={{
+                  backgroundColor: status === statusOption.value ? statusOption.color : undefined
+                }}
+              >
+                {statusOption.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
       
       <Button 
         variant="destructive" 
