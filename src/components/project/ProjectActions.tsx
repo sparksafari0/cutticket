@@ -36,10 +36,11 @@ const ProjectActions = ({
         Edit
       </Button>
       
-      <div className="z-50">
+      <div className="relative z-[100]">
         <Select
-          value={status}
+          defaultValue={status}
           onValueChange={(value) => {
+            console.log("Value selected:", value);
             if (onStatusChange) {
               onStatusChange(value as ProjectStatus);
             }
@@ -54,12 +55,15 @@ const ProjectActions = ({
           >
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="z-50">
+          <SelectContent 
+            className="z-[100] bg-white" 
+            position="popper"
+          >
             {PROJECT_STATUSES.map((statusOption) => (
               <SelectItem 
                 key={statusOption.value} 
                 value={statusOption.value}
-                className="capitalize"
+                className="capitalize cursor-pointer"
                 style={{
                   backgroundColor: status === statusOption.value ? statusOption.color : undefined
                 }}
