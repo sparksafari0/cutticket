@@ -1,48 +1,49 @@
 
 import { Project } from '@/types/project';
-import { useState } from 'react';
 import ProjectInfo from './ProjectInfo';
+import ProjectImageView from './ProjectImageView';
 import ReferencePhotosGrid from './ReferencePhotosGrid';
 import ProjectActions from './ProjectActions';
-import ProjectImageView from './ProjectImageView';
 
 interface ProjectDetailContentProps {
   project: Project;
   onEdit: () => void;
   onDelete: () => void;
+  onStatusChange?: (status: typeof project.status) => void;
 }
 
-const ProjectDetailContent = ({ project, onEdit, onDelete }: ProjectDetailContentProps) => {
-  const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
-
+const ProjectDetailContent = ({ 
+  project,
+  onEdit,
+  onDelete,
+  onStatusChange
+}: ProjectDetailContentProps) => {
   return (
-    <>
-      <div className="space-y-4 mt-12">
-        <ProjectInfo 
-          project={project} 
-          onSetExpandedPhoto={setExpandedPhoto} 
-        />
+    <div className="pt-16 space-y-4">
+      <div>
+        <ProjectInfo project={project} />
         
-        {/* Reference Photos */}
+        {project.imageUrl && (
+          <div className="mt-4">
+            <ProjectImageView src={project.imageUrl} alt={project.title} />
+          </div>
+        )}
+        
         {project.referencePhotos && project.referencePhotos.length > 0 && (
-          <ReferencePhotosGrid 
-            photos={project.referencePhotos} 
-            onPhotoClick={setExpandedPhoto} 
-          />
+          <div className="mt-4">
+            <h3 className="text-sm font-medium mb-2">Reference Photos:</h3>
+            <ReferencePhotosGrid photos={project.referencePhotos} />
+          </div>
         )}
         
         <ProjectActions 
           onEdit={onEdit} 
-          onDelete={onDelete} 
+          onDelete={onDelete}
+          status={project.status}
+          onStatusChange={onStatusChange}
         />
       </div>
-
-      {/* Photo Expanded View Dialog */}
-      <ProjectImageView 
-        image={expandedPhoto} 
-        onClose={() => setExpandedPhoto(null)} 
-      />
-    </>
+    </div>
   );
 };
 

@@ -51,14 +51,13 @@ const ProjectDetailDialog = ({
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <ProjectDetailHeader 
-            title={project.title} 
-            status={project.status}
-            onStatusChange={handleStatusChange}
+            title={project.title}
           />
           <ProjectDetailContent 
             project={project} 
             onEdit={handleEdit} 
-            onDelete={() => setDeleteDialogOpen(true)} 
+            onDelete={() => setDeleteDialogOpen(true)}
+            onStatusChange={handleStatusChange}
           />
         </DialogContent>
       </Dialog>
