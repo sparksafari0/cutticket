@@ -14,6 +14,7 @@ export const ProjectFormActions = ({
 }: ProjectFormActionsProps) => {
   // Handle close button click separately to prevent event propagation
   const handleCloseClick = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default action
     e.stopPropagation(); // Stop event propagation
     
     // Call onCancel to close the form and return to the detail view
@@ -25,7 +26,7 @@ export const ProjectFormActions = ({
   return (
     <>
       {onCancel && (
-        <div className="fixed top-4 right-4 z-20">
+        <div className="absolute top-4 right-4 z-20">
           <Button 
             type="button" 
             variant="ghost" 

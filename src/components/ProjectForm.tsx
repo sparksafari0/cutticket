@@ -1,3 +1,4 @@
+
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -82,6 +83,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
   };
 
   const handleCancel = () => {
+    console.log("Handle cancel called - closing dialog");
     onOpenChange(false);
   };
 
