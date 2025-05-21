@@ -1,3 +1,4 @@
+
 import { Project } from '@/types/project';
 import { 
   Dialog,
@@ -62,6 +63,24 @@ const ProjectDetailDialog = ({
       }
     });
   };
+  
+  const handlePickedUpChange = (pickedUp: boolean) => {
+    console.log("Picked up changing to:", pickedUp);
+    updateProject.mutate({
+      id: project.id,
+      pickedUp
+    }, {
+      onSuccess: () => {
+        // Update local state immediately for better UX
+        setCurrentProject(prev => ({...prev, pickedUp}));
+        toast.success(`Project marked as ${pickedUp ? 'picked up' : 'not picked up'}`);
+      },
+      onError: (error) => {
+        console.error("Error updating picked up status:", error);
+        toast.error("Failed to update picked up status");
+      }
+    });
+  };
 
   return (
     <>
@@ -75,6 +94,7 @@ const ProjectDetailDialog = ({
             onEdit={handleEdit} 
             onDelete={() => setDeleteDialogOpen(true)}
             onStatusChange={handleStatusChange}
+            onPickedUpChange={handlePickedUpChange}
           />
         </DialogContent>
       </Dialog>

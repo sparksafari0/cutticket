@@ -89,17 +89,17 @@ export const ProjectSelectFields = ({ form, isEdit = false }: ProjectSelectField
               <div className="flex gap-2">
                 <Toggle
                   variant="outline"
-                  pressed={field.value}
-                  onPressedChange={() => field.onChange(true)}
-                  className={`w-24 ${field.value ? 'bg-green-100' : ''}`}
+                  pressed={field.value === true}
+                  onPressedChange={() => form.setValue('pickedUp', true)}
+                  className={`w-24 ${field.value === true ? 'bg-green-100' : ''}`}
                 >
                   <Check className="mr-1" /> Yes
                 </Toggle>
                 <Toggle
                   variant="outline"
-                  pressed={!field.value}
-                  onPressedChange={() => field.onChange(false)}
-                  className={`w-24 ${!field.value ? 'bg-red-100' : ''}`}
+                  pressed={field.value === false}
+                  onPressedChange={() => form.setValue('pickedUp', false)}
+                  className={`w-24 ${field.value === false ? 'bg-red-100' : ''}`}
                 >
                   <X className="mr-1" /> No
                 </Toggle>
