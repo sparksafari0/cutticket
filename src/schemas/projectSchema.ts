@@ -14,6 +14,7 @@ export const projectFormSchema = z.object({
   notes: z.string().optional(),
   imageUrl: z.string().optional(),
   referencePhotos: z.array(z.string()).optional(),
+  pickedUp: z.boolean().default(false),
 });
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;
