@@ -21,25 +21,12 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
     setDialogOpen(true);
   };
 
-  const handleEdit = (project: Project) => {
-    // Close the detail dialog when opening edit form
-    setDialogOpen(false);
-    
-    // Call the parent edit handler
-    onEdit(project);
-  };
-
-  const reopenDetailDialog = () => {
-    console.log("Reopening detail dialog for project:", project.id);
-    setDialogOpen(true);
-  };
-
   return (
     <>
       <Card className="w-full cursor-pointer" onClick={handleCardClick}>
         <ProjectCardContent 
           project={project} 
-          onEdit={handleEdit} 
+          onEdit={onEdit} 
           onDelete={onDelete} 
         />
       </Card>
@@ -48,7 +35,7 @@ export const ProjectCard = ({ project, onEdit, onDelete }: ProjectCardProps) => 
         project={project}
         dialogOpen={dialogOpen}
         setDialogOpen={setDialogOpen}
-        onEdit={handleEdit}
+        onEdit={onEdit}
         onDelete={onDelete}
       />
     </>

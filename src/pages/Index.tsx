@@ -10,7 +10,6 @@ import { useProjects } from '@/hooks/useProjects';
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | undefined>();
-  const [projectToReopen, setProjectToReopen] = useState<string | null>(null);
   const { projects, isLoading, addProject, updateProject, deleteProject } = useProjects();
 
   const handleAddProject = (data: Partial<Project>) => {
@@ -19,7 +18,6 @@ const Index = () => {
   };
 
   const handleEditProject = (project: Project) => {
-    setProjectToReopen(project.id);
     setEditingProject(project);
     setIsFormOpen(true);
   };
@@ -33,13 +31,6 @@ const Index = () => {
 
   const handleDeleteProject = (id: string) => {
     deleteProject.mutate(id);
-  };
-
-  const reopenDetailDialog = () => {
-    // This function will be called when the form is closed
-    // It signals the ProjectCard to reopen its detail dialog
-    console.log("Index: Signaling to reopen project detail:", projectToReopen);
-    // The actual reopening logic is in the ProjectCard component
   };
 
   return (
@@ -66,7 +57,6 @@ const Index = () => {
           projects={projects}
           onEdit={handleEditProject}
           onDelete={handleDeleteProject}
-          projectToReopen={projectToReopen}
         />
 
         <ProjectForm
@@ -77,7 +67,6 @@ const Index = () => {
           }}
           onSubmit={editingProject ? handleUpdateProject : handleAddProject}
           initialData={editingProject}
-          onReopenDetailView={reopenDetailDialog}
         />
       </div>
     </div>
