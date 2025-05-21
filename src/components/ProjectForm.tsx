@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -103,7 +102,10 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               <NotesField form={form} />
               <ReferencePhotosField form={form} />
               
-              <ProjectFormActions initialData={initialData} />
+              <ProjectFormActions 
+                initialData={initialData} 
+                onCancel={() => onOpenChange(false)} 
+              />
             </form>
           </Form>
         </ScrollArea>
