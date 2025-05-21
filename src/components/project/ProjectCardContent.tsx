@@ -3,7 +3,7 @@ import { format, differenceInDays } from 'date-fns';
 import { Project } from '@/types/project';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { cn } from '@/lib/utils';
-import { Calendar, Tag, Image } from 'lucide-react';
+import { Calendar, Tag, Image, Check, X } from 'lucide-react';
 import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProjectCardActions from './ProjectCardActions';
@@ -81,6 +81,21 @@ export const ProjectCardContent = ({ project, onEdit, onDelete }: ProjectCardCon
           <div className="flex items-center text-sm text-muted-foreground">
             <Calendar className="mr-2 h-4 w-4" />
             Due: {format(project.dueDate, 'MMM dd, yyyy')}
+          </div>
+          {/* Picked up status */}
+          <div className="flex items-center text-sm text-muted-foreground">
+            {project.pickedUp !== undefined && (
+              <>
+                {project.pickedUp ? (
+                  <Check className="mr-2 h-4 w-4 text-green-500" />
+                ) : (
+                  <X className="mr-2 h-4 w-4 text-red-500" />
+                )}
+                <span>
+                  {project.pickedUp ? 'Picked up' : 'Not picked up'}
+                </span>
+              </>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-1 py-0">
