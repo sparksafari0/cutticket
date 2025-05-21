@@ -2,7 +2,7 @@
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
-import { Image } from 'lucide-react';
+import { Image, Check, X } from 'lucide-react';
 
 interface ProjectInfoProps {
   project: Project;
@@ -73,6 +73,24 @@ const ProjectInfo = ({ project, onSetExpandedPhoto }: ProjectInfoProps) => {
         <span className="text-muted-foreground">Due Date:</span>
         <span>{format(project.dueDate, 'MMMM dd, yyyy')}</span>
       </div>
+      
+      {/* Picked Up - Only show if project is completed */}
+      {project.status === 'completed' && (
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground">Picked Up:</span>
+          <div className="flex items-center">
+            {project.pickedUp ? (
+              <span className="flex items-center text-green-600">
+                <Check className="mr-1 h-4 w-4" /> Yes
+              </span>
+            ) : (
+              <span className="flex items-center text-red-600">
+                <X className="mr-1 h-4 w-4" /> No
+              </span>
+            )}
+          </div>
+        </div>
+      )}
       
       {/* Days Left - Only show if project is not completed */}
       {project.status !== 'completed' && (

@@ -53,6 +53,7 @@ export function useProjects() {
       if (data.notes !== undefined) updateData.notes = data.notes;
       if (data.imageUrl !== undefined) updateData.image_url = data.imageUrl;
       if (data.referencePhotos !== undefined) updateData.reference_photos = data.referencePhotos;
+      if (data.pickedUp !== undefined) updateData.picked_up = data.pickedUp;
       
       console.log("Updating project with ID:", data.id);
       console.log("Update data:", updateData);
