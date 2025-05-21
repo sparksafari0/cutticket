@@ -86,7 +86,7 @@ const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectI
                 variant="outline"
                 pressed={project.pickedUp === true}
                 onPressedChange={() => onPickedUpChange(true)}
-                className={`w-16 ${project.pickedUp === true ? 'bg-green-100' : ''}`}
+                className={`w-16 ${project.pickedUp === true ? 'bg-green-500 text-white' : ''}`}
                 aria-label="Mark as picked up"
               >
                 <Check className="mr-1 h-4 w-4" /> Yes
@@ -95,7 +95,7 @@ const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectI
                 variant="outline"
                 pressed={project.pickedUp === false}
                 onPressedChange={() => onPickedUpChange(false)}
-                className={`w-16 ${project.pickedUp === false ? 'bg-red-100' : ''}`}
+                className={`w-16 ${project.pickedUp === false ? 'bg-red-500 text-white' : ''}`}
                 aria-label="Mark as not picked up"
               >
                 <X className="mr-1 h-4 w-4" /> No
