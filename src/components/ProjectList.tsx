@@ -6,9 +6,10 @@ interface ProjectListProps {
   projects: Project[];
   onEdit: (project: Project) => void;
   onDelete: (id: string) => void;
+  projectToReopen?: string | null;
 }
 
-export const ProjectList = ({ projects, onEdit, onDelete }: ProjectListProps) => {
+export const ProjectList = ({ projects, onEdit, onDelete, projectToReopen }: ProjectListProps) => {
   const sortedProjects = projects?.sort((a, b) => 
     a.dueDate.getTime() - b.dueDate.getTime()
   ) || [];

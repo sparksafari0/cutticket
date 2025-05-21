@@ -26,9 +26,16 @@ interface ProjectFormProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: Partial<Project>) => void;
   initialData?: Project;
+  onReopenDetailView?: () => void;
 }
 
-export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: ProjectFormProps) => {
+export const ProjectForm = ({ 
+  open, 
+  onOpenChange, 
+  onSubmit, 
+  initialData,
+  onReopenDetailView
+}: ProjectFormProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<ProjectFormValues>({
@@ -83,8 +90,15 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
   };
 
   const handleCancel = () => {
-    console.log("Handle cancel called - closing dialog");
+    console.log("Handle cancel called - closing form and reopening detail view");
     onOpenChange(false);
+    
+    // Allow a moment for the form dialog to close before reopening detail view
+    setTimeout(() => {
+      if (onReopenDetailView && initialData) {
+        onReopenDetailView();
+      }
+    }, 100);
   };
 
   return (
