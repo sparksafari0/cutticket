@@ -3,13 +3,15 @@ import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
 import { Image, Check, X } from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
 
 interface ProjectInfoProps {
   project: Project;
   onSetExpandedPhoto: (photo: string) => void;
+  onPickedUpChange?: (pickedUp: boolean) => void;
 }
 
-const ProjectInfo = ({ project, onSetExpandedPhoto }: ProjectInfoProps) => {
+const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectInfoProps) => {
   const status = PROJECT_STATUSES.find(s => s.value === project.status);
   
   // Calculate days left for background color
@@ -78,17 +80,40 @@ const ProjectInfo = ({ project, onSetExpandedPhoto }: ProjectInfoProps) => {
       {project.status === 'completed' && (
         <div className="flex items-center justify-between">
           <span className="text-muted-foreground">Picked Up:</span>
-          <div className="flex items-center">
-            {project.pickedUp ? (
-              <span className="flex items-center text-green-600">
+          {onPickedUpChange ? (
+            <div className="flex gap-2">
+              <Toggle
+                variant="outline"
+                pressed={project.pickedUp === true}
+                onPressedChange={() => onPickedUpChange(true)}
+                className={`w-16 ${project.pickedUp === true ? 'bg-green-100' : ''}`}
+                aria-label="Mark as picked up"
+              >
                 <Check className="mr-1 h-4 w-4" /> Yes
-              </span>
-            ) : (
-              <span className="flex items-center text-red-600">
+              </Toggle>
+              <Toggle
+                variant="outline"
+                pressed={project.pickedUp === false}
+                onPressedChange={() => onPickedUpChange(false)}
+                className={`w-16 ${project.pickedUp === false ? 'bg-red-100' : ''}`}
+                aria-label="Mark as not picked up"
+              >
                 <X className="mr-1 h-4 w-4" /> No
-              </span>
-            )}
-          </div>
+              </Toggle>
+            </div>
+          ) : (
+            <div className="flex items-center">
+              {project.pickedUp ? (
+                <span className="flex items-center text-green-600">
+                  <Check className="mr-1 h-4 w-4" /> Yes
+                </span>
+              ) : (
+                <span className="flex items-center text-red-600">
+                  <X className="mr-1 h-4 w-4" /> No
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
       
