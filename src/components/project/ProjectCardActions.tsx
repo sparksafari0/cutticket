@@ -1,7 +1,4 @@
-
 import { Project } from '@/types/project';
-import { Edit, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 interface ProjectCardActionsProps {
   project: Project;
@@ -14,7 +11,7 @@ const ProjectCardActions = ({
   onEdit,
   onDelete
 }: ProjectCardActionsProps) => {
-  // Prevent event bubbling to avoid triggering card click when clicking on action buttons
+  // Keep the handlers in case they're needed by other components
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEdit(project);
@@ -25,27 +22,8 @@ const ProjectCardActions = ({
     onDelete(project.id);
   };
   
-  return (
-    <div className="flex gap-2">
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        onClick={handleEditClick}
-        aria-label="Edit project"
-      >
-        <Edit className="h-4 w-4" />
-      </Button>
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        onClick={handleDeleteClick} 
-        className="text-destructive hover:text-destructive hover:bg-destructive/10"
-        aria-label="Delete project"
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
-    </div>
-  );
+  // Return null instead of the buttons
+  return null;
 };
 
 export default ProjectCardActions;
