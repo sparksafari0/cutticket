@@ -12,6 +12,14 @@ export const ProjectFormActions = ({
   initialData,
   onCancel
 }: ProjectFormActionsProps) => {
+  // Handle close button click separately to prevent event propagation
+  const handleCloseClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Stop event propagation
+    if (onCancel) {
+      onCancel();
+    }
+  };
+
   return (
     <>
       {onCancel && (
@@ -20,7 +28,7 @@ export const ProjectFormActions = ({
             type="button" 
             variant="ghost" 
             size="icon" 
-            onClick={onCancel} 
+            onClick={handleCloseClick} 
             className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
           >
             <X className="h-4 w-4" />
