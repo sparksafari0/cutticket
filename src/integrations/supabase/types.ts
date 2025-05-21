@@ -16,6 +16,7 @@ export type Database = {
           id: string
           image_url: string | null
           notes: string | null
+          picked_up: boolean | null
           reference_photos: string[] | null
           status: string
           title: string
@@ -28,6 +29,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           notes?: string | null
+          picked_up?: boolean | null
           reference_photos?: string[] | null
           status: string
           title: string
@@ -40,6 +42,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           notes?: string | null
+          picked_up?: boolean | null
           reference_photos?: string[] | null
           status?: string
           title?: string

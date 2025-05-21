@@ -47,16 +47,18 @@ const ProjectDetailContent = ({
                 pressed={project.pickedUp === true}
                 onPressedChange={() => onPickedUpChange(true)}
                 className={`w-24 ${project.pickedUp === true ? 'bg-green-100' : ''}`}
+                aria-label="Mark as picked up"
               >
-                <Check className="mr-1" /> Yes
+                <Check className="mr-1 h-4 w-4" /> Yes
               </Toggle>
               <Toggle
                 variant="outline"
                 pressed={project.pickedUp === false}
                 onPressedChange={() => onPickedUpChange(false)}
                 className={`w-24 ${project.pickedUp === false ? 'bg-red-100' : ''}`}
+                aria-label="Mark as not picked up"
               >
-                <X className="mr-1" /> No
+                <X className="mr-1 h-4 w-4" /> No
               </Toggle>
             </div>
           </div>
