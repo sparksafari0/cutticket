@@ -15,6 +15,8 @@ export const ProjectFormActions = ({
   // Handle close button click separately to prevent event propagation
   const handleCloseClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Stop event propagation
+    
+    // Call onCancel to close the form and return to the detail view
     if (onCancel) {
       onCancel();
     }

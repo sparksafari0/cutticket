@@ -43,7 +43,6 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
     },
   });
   
-  // Reset form with initialData when it changes or when the dialog opens
   useEffect(() => {
     if (initialData && open) {
       console.log("Setting form values with initialData:", initialData);
@@ -82,6 +81,10 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
     onSubmit(data);
   };
 
+  const handleCancel = () => {
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
@@ -104,7 +107,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               
               <ProjectFormActions 
                 initialData={initialData} 
-                onCancel={() => onOpenChange(false)} 
+                onCancel={handleCancel} 
               />
             </form>
           </Form>
