@@ -9,6 +9,7 @@ export interface Project {
   notes?: string;
   imageUrl?: string;
   referencePhotos?: string[];
+  pickedUp?: boolean;
 }
 
 export type ProjectType = 'productions' | 'samples' | 'alterations' | 'other';

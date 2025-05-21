@@ -1,3 +1,4 @@
+
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -40,6 +41,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
       dueDate: new Date(),
       imageUrl: '',
       referencePhotos: [],
+      pickedUp: false,
     },
   });
   
@@ -54,6 +56,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
         notes: initialData.notes || '',
         imageUrl: initialData.imageUrl || '',
         referencePhotos: initialData.referencePhotos || [],
+        pickedUp: initialData.pickedUp || false,
       });
       
       if (initialData.imageUrl) {
@@ -71,6 +74,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
         dueDate: new Date(),
         imageUrl: '',
         referencePhotos: [],
+        pickedUp: false,
       });
       setImagePreview(null);
     }
@@ -100,7 +104,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               />
 
               <TitleField form={form} />
-              <ProjectSelectFields form={form} />
+              <ProjectSelectFields form={form} isEdit={!!initialData} />
               <DatePickerField form={form} />
               <NotesField form={form} />
               <ReferencePhotosField form={form} />

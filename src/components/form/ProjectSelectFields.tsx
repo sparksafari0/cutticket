@@ -16,12 +16,18 @@ import {
 import { PROJECT_TYPES, PROJECT_STATUSES } from '@/utils/constants';
 import { UseFormReturn } from 'react-hook-form';
 import { ProjectFormValues } from '@/schemas/projectSchema';
+import { Toggle } from '@/components/ui/toggle';
+import { Check, X } from 'lucide-react';
 
 interface ProjectSelectFieldsProps {
   form: UseFormReturn<ProjectFormValues>;
+  isEdit?: boolean;
 }
 
-export const ProjectSelectFields = ({ form }: ProjectSelectFieldsProps) => {
+export const ProjectSelectFields = ({ form, isEdit = false }: ProjectSelectFieldsProps) => {
+  const currentStatus = form.watch('status');
+  const showPickedUp = isEdit && currentStatus === 'completed';
+
   return (
     <>
       <FormField
@@ -72,6 +78,37 @@ export const ProjectSelectFields = ({ form }: ProjectSelectFieldsProps) => {
           </FormItem>
         )}
       />
+      
+      {showPickedUp && (
+        <FormField
+          control={form.control}
+          name="pickedUp"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Picked Up</FormLabel>
+              <div className="flex gap-2">
+                <Toggle
+                  variant="outline"
+                  pressed={field.value === true}
+                  onPressedChange={() => field.onChange(true)}
+                  className={`w-24 ${field.value === true ? 'bg-green-100' : ''}`}
+                >
+                  <Check className="mr-1" /> Yes
+                </Toggle>
+                <Toggle
+                  variant="outline"
+                  pressed={field.value === false}
+                  onPressedChange={() => field.onChange(false)}
+                  className={`w-24 ${field.value === false ? 'bg-red-100' : ''}`}
+                >
+                  <X className="mr-1" /> No
+                </Toggle>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
     </>
   );
 };
