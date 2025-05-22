@@ -109,6 +109,8 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               <DatePickerField form={form} />
               <NotesField form={form} />
               
+              <div className="h-16"></div>
+              
               <ProjectFormActions 
                 initialData={initialData} 
                 onCancel={handleCancel} 
