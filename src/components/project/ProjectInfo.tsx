@@ -4,6 +4,7 @@ import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
 import { Image, Check, X } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
+import ReferencePhotosGrid from './ReferencePhotosGrid';
 
 interface ProjectInfoProps {
   project: Project;
@@ -50,6 +51,16 @@ const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectI
       ) : (
         <div className="w-full h-48 sm:h-64 bg-gray-100 rounded-md flex items-center justify-center">
           <Image className="h-12 w-12 text-gray-400" />
+        </div>
+      )}
+      
+      {/* Reference Photos - Display immediately after main image */}
+      {project.referencePhotos && project.referencePhotos.length > 0 && (
+        <div className="mt-2">
+          <ReferencePhotosGrid 
+            photos={project.referencePhotos} 
+            onPhotoClick={onSetExpandedPhoto} 
+          />
         </div>
       )}
       

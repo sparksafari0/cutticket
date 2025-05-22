@@ -2,7 +2,6 @@
 import { Project } from '@/types/project';
 import ProjectInfo from './ProjectInfo';
 import ProjectImageView from './ProjectImageView';
-import ReferencePhotosGrid from './ReferencePhotosGrid';
 import ProjectActions from './ProjectActions';
 import { useState } from 'react';
 
@@ -37,15 +36,6 @@ const ProjectDetailContent = ({
             image={expandedPhoto} 
             onClose={() => setExpandedPhoto(null)} 
           />
-        )}
-        
-        {project.referencePhotos && project.referencePhotos.length > 0 && (
-          <div className="mt-4">
-            <ReferencePhotosGrid 
-              photos={project.referencePhotos} 
-              onPhotoClick={setExpandedPhoto} 
-            />
-          </div>
         )}
         
         <ProjectActions 
