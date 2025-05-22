@@ -97,19 +97,21 @@ const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectI
                 variant="outline"
                 pressed={project.pickedUp === true}
                 onPressedChange={() => onPickedUpChange(true)}
-                className={`w-16 ${project.pickedUp === true ? 'bg-green-500 text-white' : ''}`}
+                className={`w-16 ${project.pickedUp === true ? 'bg-green-100 border-green-500 ring-1 ring-green-500' : ''}`}
                 aria-label="Mark as picked up"
               >
-                <Check className="mr-1 h-4 w-4" /> Yes
+                <Check className={`mr-1 h-4 w-4 ${project.pickedUp === true ? 'text-green-600' : ''}`} /> 
+                <span className={project.pickedUp === true ? 'text-green-600 font-medium' : ''}>Yes</span>
               </Toggle>
               <Toggle
                 variant="outline"
                 pressed={project.pickedUp === false}
                 onPressedChange={() => onPickedUpChange(false)}
-                className={`w-16 ${project.pickedUp === false ? 'bg-red-500 text-white' : ''}`}
+                className={`w-16 ${project.pickedUp === false ? 'bg-red-100 border-red-500 ring-1 ring-red-500' : ''}`}
                 aria-label="Mark as not picked up"
               >
-                <X className="mr-1 h-4 w-4" /> No
+                <X className={`mr-1 h-4 w-4 ${project.pickedUp === false ? 'text-red-600' : ''}`} /> 
+                <span className={project.pickedUp === false ? 'text-red-600 font-medium' : ''}>No</span>
               </Toggle>
             </div>
           ) : (
