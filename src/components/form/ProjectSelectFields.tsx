@@ -91,17 +91,19 @@ export const ProjectSelectFields = ({ form, isEdit = false }: ProjectSelectField
                   variant="outline"
                   pressed={field.value === true}
                   onPressedChange={() => form.setValue('pickedUp', true)}
-                  className={`w-24 ${field.value === true ? 'bg-green-100' : ''}`}
+                  className={`w-24 ${field.value === true ? 'bg-green-100 border-green-500 ring-1 ring-green-500' : ''}`}
                 >
-                  <Check className="mr-1" /> Yes
+                  <Check className={`mr-1 ${field.value === true ? 'text-green-600' : ''}`} /> 
+                  <span className={field.value === true ? 'text-green-600 font-medium' : ''}>Yes</span>
                 </Toggle>
                 <Toggle
                   variant="outline"
                   pressed={field.value === false}
                   onPressedChange={() => form.setValue('pickedUp', false)}
-                  className={`w-24 ${field.value === false ? 'bg-red-100' : ''}`}
+                  className={`w-24 ${field.value === false ? 'bg-red-100 border-red-500 ring-1 ring-red-500' : ''}`}
                 >
-                  <X className="mr-1" /> No
+                  <X className={`mr-1 ${field.value === false ? 'text-red-600' : ''}`} /> 
+                  <span className={field.value === false ? 'text-red-600 font-medium' : ''}>No</span>
                 </Toggle>
               </div>
               <FormMessage />
