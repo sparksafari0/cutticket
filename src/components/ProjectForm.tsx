@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -102,12 +101,13 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
                 imagePreview={imagePreview} 
                 setImagePreview={setImagePreview} 
               />
+              
+              <ReferencePhotosField form={form} />
 
               <TitleField form={form} />
               <ProjectSelectFields form={form} isEdit={!!initialData} />
               <DatePickerField form={form} />
               <NotesField form={form} />
-              <ReferencePhotosField form={form} />
               
               <ProjectFormActions 
                 initialData={initialData} 
