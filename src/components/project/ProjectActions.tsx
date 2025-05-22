@@ -16,7 +16,7 @@ const ProjectActions = ({
   onStatusChange
 }: ProjectActionsProps) => {
   const currentStatus = PROJECT_STATUSES.find(s => s.value === status);
-  return <div className="flex justify-end space-x-2 pt-5 py-0">
+  return <div className="flex justify-end space-x-2 pt-10 py-0">
       <Button variant="outline" onClick={onEdit}>
         <Edit className="mr-2 h-4 w-4" />
         Edit
