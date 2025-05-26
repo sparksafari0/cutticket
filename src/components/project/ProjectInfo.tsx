@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
@@ -80,14 +79,14 @@ const ProjectInfo = ({
       
       {/* Status Selector */}
       <div className="flex justify-end space-x-2 pt-15 py-0">
-        <div className="relative z-[100]">
+        <div className="relative z-[100] w-full">
           <Select defaultValue={project.status} onValueChange={value => {
             console.log("Value selected:", value);
             if (onStatusChange) {
               onStatusChange(value as Project['status']);
             }
           }}>
-            <SelectTrigger className="w-[130px]" style={{
+            <SelectTrigger className="w-full" style={{
               backgroundColor: status?.color || 'transparent',
               color: 'black'
             }}>
