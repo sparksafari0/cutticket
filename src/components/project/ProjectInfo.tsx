@@ -1,11 +1,8 @@
-
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
 import { Image, Check, X } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ProjectStatus } from "@/types/project";
 import ReferencePhotosGrid from './ReferencePhotosGrid';
 import ProjectActions from './ProjectActions';
 
@@ -77,56 +74,22 @@ const ProjectInfo = ({
         </div>
       )}
       
-      {/* Project Actions - Right after reference photos, but only show Edit button */}
-      <div className="flex justify-end">
-        <ProjectActions 
-          onEdit={onEdit} 
-          status={project.status} 
-          hideStatusSelector={true}
-        />
-      </div>
+      {/* Project Actions - Right after reference photos */}
+      <ProjectActions 
+        onEdit={onEdit} 
+        status={project.status} 
+        onStatusChange={onStatusChange} 
+      />
       
-      {/* Status - Now with selector */}
+      {/* Status */}
       <div className="flex items-center justify-between">
         <span className="text-muted-foreground">Status:</span>
-        {onStatusChange ? (
-          <div className="relative z-[100]">
-            <Select defaultValue={project.status} onValueChange={(value) => {
-              console.log("Value selected:", value);
-              if (onStatusChange) {
-                onStatusChange(value as ProjectStatus);
-              }
-            }}>
-              <SelectTrigger className="w-[130px] h-8 text-sm" style={{
-                backgroundColor: status?.color || 'transparent',
-                color: 'black'
-              }}>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent className="z-[100] bg-white" position="popper">
-                {PROJECT_STATUSES.map(statusOption => (
-                  <SelectItem 
-                    key={statusOption.value} 
-                    value={statusOption.value} 
-                    className="capitalize cursor-pointer text-sm" 
-                    style={{
-                      backgroundColor: project.status === statusOption.value ? statusOption.color : undefined
-                    }}
-                  >
-                    {statusOption.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        ) : (
-          <div 
-            className="px-2 py-1 rounded text-sm capitalize"
-            style={{ backgroundColor: status?.color }}
-          >
-            {status?.label}
-          </div>
-        )}
+        <div 
+          className="px-2 py-1 rounded text-sm capitalize"
+          style={{ backgroundColor: status?.color }}
+        >
+          {status?.label}
+        </div>
       </div>
       
       {/* Type */}
