@@ -49,8 +49,8 @@ const ProjectActions = ({
         </div>
       </div>
       
-      {/* Fixed floating buttons at bottom */}
-      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-50">
+      {/* Fixed floating buttons at bottom - matching ProjectFormActions z-index */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-10">
         <Button variant="outline" onClick={onEdit} className="w-[130px] shadow-lg">
           <Edit className="mr-2 h-4 w-4" />
           Edit
