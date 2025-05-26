@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Project } from '@/types/project';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,14 @@ const Index = () => {
 
   const handleDeleteProject = (id: string) => {
     deleteProject.mutate(id);
+    setIsFormOpen(false);
+    setEditingProject(undefined);
+  };
+
+  const handleDeleteFromForm = () => {
+    if (editingProject) {
+      handleDeleteProject(editingProject.id);
+    }
   };
 
   // Filter projects based on current filter
@@ -100,6 +107,7 @@ const Index = () => {
           }}
           onSubmit={editingProject ? handleUpdateProject : handleAddProject}
           initialData={editingProject}
+          onDelete={editingProject ? handleDeleteFromForm : undefined}
         />
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -25,9 +26,10 @@ interface ProjectFormProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: Partial<Project>) => void;
   initialData?: Project;
+  onDelete?: () => void;
 }
 
-export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: ProjectFormProps) => {
+export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelete }: ProjectFormProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<ProjectFormValues>({
@@ -113,7 +115,8 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData }: Proje
               
               <ProjectFormActions 
                 initialData={initialData} 
-                onCancel={handleCancel} 
+                onCancel={handleCancel}
+                onDelete={onDelete}
               />
             </form>
           </Form>
