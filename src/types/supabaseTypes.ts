@@ -14,6 +14,7 @@ export interface SupabaseProject {
   image_url: string | null;
   reference_photos: string[] | null;
   picked_up: boolean | null;
+  style_number: string | null;
 }
 
 // Required fields for insert operations
@@ -26,6 +27,7 @@ export interface SupabaseProjectInsert {
   image_url?: string | null;
   reference_photos?: string[] | null;
   picked_up?: boolean | null;
+  style_number?: string | null;
 }
 
 // Converter functions between local Project type and Supabase type
@@ -43,13 +45,15 @@ export const toSupabaseProject = (project: Partial<Project>): SupabaseProjectIns
     notes: project.notes || null,
     image_url: project.imageUrl || null,
     reference_photos: project.referencePhotos || null,
-    picked_up: project.pickedUp || null
+    picked_up: project.pickedUp || null,
+    style_number: project.styleNumber || null
   };
 };
 
 export const fromSupabaseProject = (project: SupabaseProject): Project => ({
   id: project.id,
   title: project.title,
+  styleNumber: project.style_number || undefined,
   type: project.type as ProjectType,
   status: project.status as ProjectStatus,
   dueDate: new Date(project.due_date),

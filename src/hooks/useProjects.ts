@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from '@/types/project';
@@ -48,6 +47,7 @@ export function useProjects() {
       
       // Add any other provided fields to update
       if (data.title) updateData.title = data.title;
+      if (data.styleNumber !== undefined) updateData.style_number = data.styleNumber;
       if (data.type) updateData.type = data.type;
       if (data.dueDate) updateData.due_date = data.dueDate.toISOString();
       if (data.notes !== undefined) updateData.notes = data.notes;

@@ -2,6 +2,7 @@
 export interface Project {
   id: string;
   title: string;
+  styleNumber?: string;
   type: ProjectType;
   status: ProjectStatus;
   dueDate: Date;

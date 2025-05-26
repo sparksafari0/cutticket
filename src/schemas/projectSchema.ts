@@ -6,6 +6,7 @@ export const projectFormSchema = z.object({
     .string()
     .min(1, 'Title is required')
     .max(50, 'Title cannot be more than 50 characters'),
+  styleNumber: z.string().optional(),
   type: z.enum(['productions', 'samples', 'alterations', 'other']),
   status: z.enum(['not_started', 'in_progress', 'completed']),
   dueDate: z.date({

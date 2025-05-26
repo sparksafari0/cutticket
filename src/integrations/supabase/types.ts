@@ -19,6 +19,7 @@ export type Database = {
           picked_up: boolean | null
           reference_photos: string[] | null
           status: string
+          style_number: string | null
           title: string
           type: string
           updated_at: string
@@ -32,6 +33,7 @@ export type Database = {
           picked_up?: boolean | null
           reference_photos?: string[] | null
           status: string
+          style_number?: string | null
           title: string
           type: string
           updated_at?: string
@@ -45,6 +47,7 @@ export type Database = {
           picked_up?: boolean | null
           reference_photos?: string[] | null
           status?: string
+          style_number?: string | null
           title?: string
           type?: string
           updated_at?: string

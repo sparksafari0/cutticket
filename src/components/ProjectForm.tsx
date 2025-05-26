@@ -20,6 +20,7 @@ import { TitleField } from './form/TitleField';
 import { NotesField } from './form/NotesField';
 import { ReferencePhotosField } from './form/ReferencePhotosField';
 import DeleteConfirmationDialog from './project/DeleteConfirmationDialog';
+import { StyleNumberField } from './form/StyleNumberField';
 
 interface ProjectFormProps {
   open: boolean;
@@ -37,6 +38,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
     resolver: zodResolver(projectFormSchema),
     defaultValues: {
       title: '',
+      styleNumber: '',
       type: 'productions',
       status: 'not_started',
       notes: '',
@@ -52,6 +54,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
       console.log("Setting form values with initialData:", initialData);
       form.reset({
         title: initialData.title,
+        styleNumber: initialData.styleNumber || '',
         type: initialData.type,
         status: initialData.status,
         dueDate: initialData.dueDate,
@@ -70,6 +73,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
       // Reset to defaults when adding new project
       form.reset({
         title: '',
+        styleNumber: '',
         type: 'productions',
         status: 'not_started',
         notes: '',
@@ -120,6 +124,7 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
                 <ReferencePhotosField form={form} />
 
                 <TitleField form={form} />
+                <StyleNumberField form={form} />
                 <ProjectSelectFields form={form} isEdit={!!initialData} />
                 <DatePickerField form={form} />
                 <NotesField form={form} />
