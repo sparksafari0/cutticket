@@ -25,7 +25,7 @@ const ProjectDetailContent = ({
   const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
   
   return (
-    <div className="pt-20 space-y-4">
+    <div className="pt-28 space-y-4">
       <div>
         <ProjectInfo 
           project={project} 
