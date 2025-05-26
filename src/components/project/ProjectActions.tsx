@@ -22,7 +22,7 @@ const ProjectActions = ({
 
   return (
     <div className="flex justify-end space-x-2 pt-15 py-0">
-      <Button variant="outline" onClick={onEdit}>
+      <Button variant="outline" onClick={onEdit} className="w-[130px]">
         <Edit className="mr-2 h-4 w-4" />
         Edit
       </Button>
