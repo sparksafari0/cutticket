@@ -170,6 +170,19 @@ const ProjectInfo = ({
           </div>
         </div>
       )}
+      
+      {/* Action Buttons positioned after Notes */}
+      <div className="pt-6 flex items-center justify-center gap-2">
+        <Button variant="outline" onClick={onEdit} className="w-[130px] shadow-lg">
+          <Edit className="mr-2 h-4 w-4" />
+          Edit
+        </Button>
+        {onClose && (
+          <Button onClick={onClose} className="w-[130px] shadow-lg bg-black text-white hover:bg-gray-800">
+            Done
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
