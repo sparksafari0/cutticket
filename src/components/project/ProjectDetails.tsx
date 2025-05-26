@@ -8,12 +8,16 @@ interface ProjectDetailsProps {
 }
 
 const ProjectDetails = ({ project }: ProjectDetailsProps) => {
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
     <div className="flex flex-wrap gap-2 mb-4">
-      <Badge variant="secondary" className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded-full">
-        {project.type}
+      <Badge variant="secondary" className="text-sm px-3 py-1 bg-gray-200 text-gray-700 rounded-full font-medium">
+        {capitalizeFirstLetter(project.type)}
       </Badge>
-      <Badge variant="secondary" className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded-full">
+      <Badge variant="secondary" className="text-sm px-3 py-1 bg-gray-200 text-gray-700 rounded-full font-medium">
         {format(project.dueDate, 'MMM dd, yyyy')}
       </Badge>
     </div>
