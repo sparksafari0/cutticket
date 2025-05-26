@@ -1,6 +1,4 @@
 
-import { Edit, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PROJECT_STATUSES } from "@/utils/constants";
 import { ProjectStatus } from "@/types/project";
@@ -21,47 +19,32 @@ const ProjectActions = ({
   const currentStatus = PROJECT_STATUSES.find(s => s.value === status);
   
   return (
-    <>
-      <div className="flex justify-end space-x-2 pt-15 py-0">
-        <div className="relative z-[100]">
-          <Select defaultValue={status} onValueChange={value => {
-            console.log("Value selected:", value);
-            if (onStatusChange) {
-              onStatusChange(value as ProjectStatus);
-            }
+    <div className="flex justify-end space-x-2 pt-15 py-0">
+      <div className="relative z-[100]">
+        <Select defaultValue={status} onValueChange={value => {
+          console.log("Value selected:", value);
+          if (onStatusChange) {
+            onStatusChange(value as ProjectStatus);
+          }
+        }}>
+          <SelectTrigger className="w-[130px]" style={{
+            backgroundColor: currentStatus?.color || 'transparent',
+            color: 'black'
           }}>
-            <SelectTrigger className="w-[130px]" style={{
-              backgroundColor: currentStatus?.color || 'transparent',
-              color: 'black'
-            }}>
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent className="z-[100] bg-white" position="popper">
-              {PROJECT_STATUSES.map(statusOption => 
-                <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer" style={{
-                  backgroundColor: status === statusOption.value ? statusOption.color : undefined
-                }}>
-                  {statusOption.label}
-                </SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-        </div>
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent className="z-[100] bg-white" position="popper">
+            {PROJECT_STATUSES.map(statusOption => 
+              <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer" style={{
+                backgroundColor: status === statusOption.value ? statusOption.color : undefined
+              }}>
+                {statusOption.label}
+              </SelectItem>
+            )}
+          </SelectContent>
+        </Select>
       </div>
-      
-      {/* Action buttons positioned normally underneath notes */}
-      <div className="flex items-center justify-center gap-2 mt-4">
-        <Button variant="outline" onClick={onEdit} className="w-[130px] shadow-lg">
-          <Edit className="mr-2 h-4 w-4" />
-          Edit
-        </Button>
-        {onClose && (
-          <Button onClick={onClose} className="w-[130px] shadow-lg bg-black text-white hover:bg-gray-800">
-            Done
-          </Button>
-        )}
-      </div>
-    </>
+    </div>
   );
 };
 

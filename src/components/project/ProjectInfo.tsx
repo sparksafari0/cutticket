@@ -2,10 +2,11 @@
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
-import { Image, Check, X } from 'lucide-react';
+import { Image, Check, X, Edit } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ReferencePhotosGrid from './ReferencePhotosGrid';
-import ProjectActions from './ProjectActions';
 
 interface ProjectInfoProps {
   project: Project;
@@ -77,13 +78,33 @@ const ProjectInfo = ({
         </div>
       )}
       
-      {/* Project Actions - Right after reference photos */}
-      <ProjectActions 
-        onEdit={onEdit} 
-        status={project.status} 
-        onStatusChange={onStatusChange}
-        onClose={onClose}
-      />
+      {/* Status Selector */}
+      <div className="flex justify-end space-x-2 pt-15 py-0">
+        <div className="relative z-[100]">
+          <Select defaultValue={project.status} onValueChange={value => {
+            console.log("Value selected:", value);
+            if (onStatusChange) {
+              onStatusChange(value as Project['status']);
+            }
+          }}>
+            <SelectTrigger className="w-[130px]" style={{
+              backgroundColor: status?.color || 'transparent',
+              color: 'black'
+            }}>
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent className="z-[100] bg-white" position="popper">
+              {PROJECT_STATUSES.map(statusOption => 
+                <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer" style={{
+                  backgroundColor: project.status === statusOption.value ? statusOption.color : undefined
+                }}>
+                  {statusOption.label}
+                </SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       
       {/* Status */}
       <div className="flex items-center justify-between">
@@ -170,6 +191,19 @@ const ProjectInfo = ({
           </div>
         </div>
       )}
+      
+      {/* Action buttons positioned right after notes */}
+      <div className="flex items-center justify-center gap-2 mt-4">
+        <Button variant="outline" onClick={onEdit} className="w-[130px] shadow-lg">
+          <Edit className="mr-2 h-4 w-4" />
+          Edit
+        </Button>
+        {onClose && (
+          <Button onClick={onClose} className="w-[130px] shadow-lg bg-black text-white hover:bg-gray-800">
+            Done
+          </Button>
+        )}
+      </div>
     </div>
   );
 };
