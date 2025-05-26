@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import { 
   Dialog,
@@ -92,6 +91,7 @@ const ProjectDetailDialog = ({
         <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
           <ProjectDetailHeader 
             title={currentProject.title}
+            project={currentProject}
           />
           <ProjectDetailContent 
             project={currentProject} 

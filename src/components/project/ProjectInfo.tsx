@@ -2,7 +2,6 @@
 import { Project } from '@/types/project';
 import ProjectImageDisplay from './ProjectImageDisplay';
 import ProjectStatusSelector from './ProjectStatusSelector';
-import ProjectDetails from './ProjectDetails';
 import ProjectPickupStatus from './ProjectPickupStatus';
 import ProjectDaysLeft from './ProjectDaysLeft';
 import ProjectNotes from './ProjectNotes';
@@ -29,8 +28,6 @@ const ProjectInfo = ({
 }: ProjectInfoProps) => {
   return (
     <div className="space-y-4">
-      <ProjectDetails project={project} />
-      
       <ProjectDaysLeft project={project} />
       
       <div className="-mt-2">
