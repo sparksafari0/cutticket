@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -20,6 +19,7 @@ import { ProjectFormActions } from './form/ProjectFormActions';
 import { TitleField } from './form/TitleField';
 import { NotesField } from './form/NotesField';
 import { ReferencePhotosField } from './form/ReferencePhotosField';
+import DeleteConfirmationDialog from './project/DeleteConfirmationDialog';
 
 interface ProjectFormProps {
   open: boolean;
@@ -31,6 +31,7 @@ interface ProjectFormProps {
 
 export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelete }: ProjectFormProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema),
@@ -90,38 +91,61 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
     onOpenChange(false);
   };
 
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
-        <ProjectFormHeader initialData={initialData} />
-        
-        <ScrollArea className="px-6 pb-6 max-h-[calc(90vh-80px)]">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
-              <ImageUploadField 
-                form={form} 
-                imagePreview={imagePreview} 
-                setImagePreview={setImagePreview} 
-              />
-              
-              <ReferencePhotosField form={form} />
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+  };
 
-              <TitleField form={form} />
-              <ProjectSelectFields form={form} isEdit={!!initialData} />
-              <DatePickerField form={form} />
-              <NotesField form={form} />
-              
-              <div className="h-16"></div>
-              
-              <ProjectFormActions 
-                initialData={initialData} 
-                onCancel={handleCancel}
-                onDelete={onDelete}
-              />
-            </form>
-          </Form>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+  const handleDeleteConfirm = () => {
+    setDeleteDialogOpen(false);
+    if (onDelete) {
+      onDelete();
+    }
+  };
+
+  return (
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[500px] max-h-[90vh] p-0">
+          <ProjectFormHeader initialData={initialData} />
+          
+          <ScrollArea className="px-6 pb-6 max-h-[calc(90vh-80px)]">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+                <ImageUploadField 
+                  form={form} 
+                  imagePreview={imagePreview} 
+                  setImagePreview={setImagePreview} 
+                />
+                
+                <ReferencePhotosField form={form} />
+
+                <TitleField form={form} />
+                <ProjectSelectFields form={form} isEdit={!!initialData} />
+                <DatePickerField form={form} />
+                <NotesField form={form} />
+                
+                <div className="h-16"></div>
+                
+                <ProjectFormActions 
+                  initialData={initialData} 
+                  onCancel={handleCancel}
+                  onDelete={handleDeleteClick}
+                />
+              </form>
+            </Form>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      {initialData && (
+        <DeleteConfirmationDialog 
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title={initialData.title}
+        />
+      )}
+    </>
   );
 };
