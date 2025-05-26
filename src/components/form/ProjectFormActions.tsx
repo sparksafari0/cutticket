@@ -1,16 +1,18 @@
 
 import { Button } from '@/components/ui/button';
 import { Project } from '@/types/project';
-import { X } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 
 interface ProjectFormActionsProps {
   initialData?: Project;
   onCancel?: () => void;
+  onDelete?: () => void;
 }
 
 export const ProjectFormActions = ({
   initialData,
-  onCancel
+  onCancel,
+  onDelete
 }: ProjectFormActionsProps) => {
   // Handle close button click separately to prevent event propagation
   const handleCloseClick = (e: React.MouseEvent) => {
@@ -40,7 +42,18 @@ export const ProjectFormActions = ({
       )}
       
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-10">
-        <Button type="submit" className="shadow-lg">
+        {onDelete && initialData && (
+          <Button 
+            type="button" 
+            variant="destructive" 
+            onClick={onDelete}
+            className="shadow-lg w-[130px]"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete
+          </Button>
+        )}
+        <Button type="submit" className="shadow-lg w-[130px]">
           {initialData ? 'Update Project' : 'Add Project'}
         </Button>
       </div>

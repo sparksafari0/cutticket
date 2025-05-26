@@ -1,5 +1,5 @@
 
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PROJECT_STATUSES } from "@/utils/constants";
@@ -7,14 +7,12 @@ import { ProjectStatus } from "@/types/project";
 
 interface ProjectActionsProps {
   onEdit: () => void;
-  onDelete: () => void;
   status: ProjectStatus;
   onStatusChange?: (status: ProjectStatus) => void;
 }
 
 const ProjectActions = ({
   onEdit,
-  onDelete,
   status,
   onStatusChange
 }: ProjectActionsProps) => {
@@ -56,10 +54,6 @@ const ProjectActions = ({
           </SelectContent>
         </Select>
       </div>
-      
-      <Button variant="destructive" onClick={onDelete}>
-        <Trash2 className="h-4 w-4" />
-      </Button>
     </div>
   );
 };

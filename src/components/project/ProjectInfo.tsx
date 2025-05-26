@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
@@ -78,7 +77,6 @@ const ProjectInfo = ({
       {/* Project Actions - Right after reference photos */}
       <ProjectActions 
         onEdit={onEdit} 
-        onDelete={onDelete} 
         status={project.status} 
         onStatusChange={onStatusChange} 
       />
