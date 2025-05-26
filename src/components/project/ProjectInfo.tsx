@@ -31,7 +31,9 @@ const ProjectInfo = ({
     <div className="space-y-4">
       <ProjectDaysLeft project={project} />
       
-      <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
+      <div className="-mt-2">
+        <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
+      </div>
       
       <ProjectImageDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
