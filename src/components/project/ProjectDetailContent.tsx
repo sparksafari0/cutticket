@@ -28,7 +28,10 @@ const ProjectDetailContent = ({
         <ProjectInfo 
           project={project} 
           onSetExpandedPhoto={setExpandedPhoto}
-          onPickedUpChange={onPickedUpChange} 
+          onPickedUpChange={onPickedUpChange}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onStatusChange={onStatusChange}
         />
         
         {expandedPhoto && (
@@ -37,13 +40,6 @@ const ProjectDetailContent = ({
             onClose={() => setExpandedPhoto(null)} 
           />
         )}
-        
-        <ProjectActions 
-          onEdit={onEdit} 
-          onDelete={onDelete} 
-          status={project.status} 
-          onStatusChange={onStatusChange} 
-        />
       </div>
     </div>
   );

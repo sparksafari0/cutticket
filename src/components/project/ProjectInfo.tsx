@@ -5,14 +5,25 @@ import { Project } from '@/types/project';
 import { Image, Check, X } from 'lucide-react';
 import { Toggle } from '@/components/ui/toggle';
 import ReferencePhotosGrid from './ReferencePhotosGrid';
+import ProjectActions from './ProjectActions';
 
 interface ProjectInfoProps {
   project: Project;
   onSetExpandedPhoto: (photo: string) => void;
   onPickedUpChange?: (pickedUp: boolean) => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onStatusChange?: (status: Project['status']) => void;
 }
 
-const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectInfoProps) => {
+const ProjectInfo = ({ 
+  project, 
+  onSetExpandedPhoto, 
+  onPickedUpChange,
+  onEdit,
+  onDelete,
+  onStatusChange
+}: ProjectInfoProps) => {
   const status = PROJECT_STATUSES.find(s => s.value === project.status);
   
   // Calculate days left for background color
@@ -63,6 +74,14 @@ const ProjectInfo = ({ project, onSetExpandedPhoto, onPickedUpChange }: ProjectI
           />
         </div>
       )}
+      
+      {/* Project Actions - Right after reference photos */}
+      <ProjectActions 
+        onEdit={onEdit} 
+        onDelete={onDelete} 
+        status={project.status} 
+        onStatusChange={onStatusChange} 
+      />
       
       {/* Status */}
       <div className="flex items-center justify-between">
