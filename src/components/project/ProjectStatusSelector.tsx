@@ -20,7 +20,7 @@ const ProjectStatusSelector = ({ project, onStatusChange }: ProjectStatusSelecto
             onStatusChange(value as Project['status']);
           }
         }}>
-          <SelectTrigger className="w-full text-center" style={{
+          <SelectTrigger className="w-full text-center justify-center" style={{
             backgroundColor: status?.color || 'transparent',
             color: 'black'
           }}>
@@ -28,7 +28,7 @@ const ProjectStatusSelector = ({ project, onStatusChange }: ProjectStatusSelecto
           </SelectTrigger>
           <SelectContent className="z-[100] bg-white" position="popper">
             {PROJECT_STATUSES.map(statusOption => 
-              <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer text-center" style={{
+              <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer text-center justify-center" style={{
                 backgroundColor: project.status === statusOption.value ? statusOption.color : undefined
               }}>
                 {statusOption.label}
