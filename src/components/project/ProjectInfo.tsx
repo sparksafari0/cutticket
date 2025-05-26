@@ -29,6 +29,8 @@ const ProjectInfo = ({
 }: ProjectInfoProps) => {
   return (
     <div className="space-y-4">
+      <ProjectDetails project={project} />
+      
       <ProjectDaysLeft project={project} />
       
       <div className="-mt-2">
@@ -36,8 +38,6 @@ const ProjectInfo = ({
       </div>
       
       <ProjectImageDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
-      
-      <ProjectDetails project={project} />
       
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
       
