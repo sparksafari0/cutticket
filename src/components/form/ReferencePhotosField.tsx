@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Plus, X, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -37,9 +36,9 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
     try {
       setUploading(true);
       
-      // Check if we've reached the limit of 5 photos
-      if (referencePhotos.length >= 5) {
-        console.error('Maximum 5 reference photos allowed');
+      // Check if we've reached the limit of 6 photos
+      if (referencePhotos.length >= 6) {
+        console.error('Maximum 6 reference photos allowed');
         return;
       }
       
@@ -93,10 +92,10 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
       name="referencePhotos"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Reference Photos (Optional, max 5)</FormLabel>
+          <FormLabel>Reference Photos (Optional, max 6)</FormLabel>
           
           {/* Photo Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mb-2">
             {referencePhotos.map((photo, index) => (
               <div key={index} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden">
                 <img 
@@ -116,8 +115,8 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
               </div>
             ))}
             
-            {/* Add Photo Placeholder - only show if under 5 photos */}
-            {referencePhotos.length < 5 && (
+            {/* Add Photo Placeholder - only show if under 6 photos */}
+            {referencePhotos.length < 6 && (
               <div className="aspect-square bg-gray-100 rounded-md flex items-center justify-center border-2 border-dashed border-gray-200">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -183,7 +182,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
           
           {/* Help text */}
           <div className="text-xs text-muted-foreground mt-1">
-            {uploading ? 'Uploading...' : `${5 - referencePhotos.length} ${referencePhotos.length < 4 ? 'photos' : 'photo'} remaining`}
+            {uploading ? 'Uploading...' : `${6 - referencePhotos.length} ${referencePhotos.length < 5 ? 'photos' : 'photo'} remaining`}
           </div>
           
           <input type="hidden" {...field} value={JSON.stringify(field.value || [])} />
