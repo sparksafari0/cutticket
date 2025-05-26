@@ -1,4 +1,3 @@
-
 import { Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,8 +22,7 @@ const ProjectActions = ({
   return (
     <div className="flex justify-end space-x-2 pt-15 py-0">
       <Button variant="outline" onClick={onEdit}>
-        <Edit className="mr-2 h-4 w-4" />
-        Edit
+        <Edit className="h-4 w-4" />
       </Button>
       
       <div className="relative z-[100]">
