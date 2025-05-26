@@ -6,12 +6,19 @@ interface ProjectListProps {
   projects: Project[];
   onEdit: (project: Project) => void;
   onDelete: (id: string) => void;
+  filter?: 'current' | 'completed';
 }
 
-export const ProjectList = ({ projects, onEdit, onDelete }: ProjectListProps) => {
-  const sortedProjects = projects?.sort((a, b) => 
-    a.dueDate.getTime() - b.dueDate.getTime()
-  ) || [];
+export const ProjectList = ({ projects, onEdit, onDelete, filter = 'current' }: ProjectListProps) => {
+  const sortedProjects = projects?.sort((a, b) => {
+    if (filter === 'completed') {
+      // For completed projects, sort by due date descending (most recent first)
+      return b.dueDate.getTime() - a.dueDate.getTime();
+    } else {
+      // For current projects, sort by due date ascending (earliest first)
+      return a.dueDate.getTime() - b.dueDate.getTime();
+    }
+  }) || [];
 
   if (sortedProjects.length === 0) {
     return null;

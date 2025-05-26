@@ -89,6 +89,7 @@ const Index = () => {
           projects={filteredProjects}
           onEdit={handleEditProject}
           onDelete={handleDeleteProject}
+          filter={filter}
         />
 
         <ProjectForm
