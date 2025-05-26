@@ -1,27 +1,16 @@
-
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
-
 interface ProjectDetailsProps {
   project: Project;
 }
-
-const ProjectDetails = ({ project }: ProjectDetailsProps) => {
+const ProjectDetails = ({
+  project
+}: ProjectDetailsProps) => {
   const status = PROJECT_STATUSES.find(s => s.value === project.status);
-
-  return (
-    <>
+  return <>
       {/* Status */}
-      <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Status:</span>
-        <div 
-          className="px-2 py-1 rounded text-sm capitalize"
-          style={{ backgroundColor: status?.color }}
-        >
-          {status?.label}
-        </div>
-      </div>
+      
       
       {/* Type */}
       <div className="flex items-center justify-between">
@@ -34,8 +23,6 @@ const ProjectDetails = ({ project }: ProjectDetailsProps) => {
         <span className="text-muted-foreground">Due Date:</span>
         <span>{format(project.dueDate, 'MMMM dd, yyyy')}</span>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default ProjectDetails;
