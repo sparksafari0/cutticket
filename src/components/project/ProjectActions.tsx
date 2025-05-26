@@ -1,4 +1,5 @@
 
+
 import { Edit, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -44,7 +45,7 @@ const ProjectActions = ({
       </div>
       
       {/* Floating buttons at bottom footer */}
-      <div className="fixed bottom-2 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-10">
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-10">
         <Button variant="outline" onClick={onEdit} className="w-[130px] shadow-lg">
           <Edit className="mr-2 h-4 w-4" />
           Edit
@@ -56,3 +57,4 @@ const ProjectActions = ({
     </>;
 };
 export default ProjectActions;
+
