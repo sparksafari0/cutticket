@@ -45,6 +45,10 @@ const ProjectDetailDialog = ({
     setDialogOpen(false);
     onEdit(currentProject);
   };
+
+  const handleClose = () => {
+    setDialogOpen(false);
+  };
   
   const handleStatusChange = (status: Project['status']) => {
     console.log("Status changing to:", status);
@@ -95,6 +99,7 @@ const ProjectDetailDialog = ({
             onDelete={() => setDeleteDialogOpen(true)}
             onStatusChange={handleStatusChange}
             onPickedUpChange={handlePickedUpChange}
+            onClose={handleClose}
           />
         </DialogContent>
       </Dialog>

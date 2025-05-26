@@ -1,3 +1,4 @@
+
 import { format } from 'date-fns';
 import { PROJECT_STATUSES } from '@/utils/constants';
 import { Project } from '@/types/project';
@@ -13,6 +14,7 @@ interface ProjectInfoProps {
   onEdit: () => void;
   onDelete: () => void;
   onStatusChange?: (status: Project['status']) => void;
+  onClose?: () => void;
 }
 
 const ProjectInfo = ({ 
@@ -21,7 +23,8 @@ const ProjectInfo = ({
   onPickedUpChange,
   onEdit,
   onDelete,
-  onStatusChange
+  onStatusChange,
+  onClose
 }: ProjectInfoProps) => {
   const status = PROJECT_STATUSES.find(s => s.value === project.status);
   
@@ -78,7 +81,8 @@ const ProjectInfo = ({
       <ProjectActions 
         onEdit={onEdit} 
         status={project.status} 
-        onStatusChange={onStatusChange} 
+        onStatusChange={onStatusChange}
+        onClose={onClose}
       />
       
       {/* Status */}

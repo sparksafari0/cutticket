@@ -11,6 +11,7 @@ interface ProjectDetailContentProps {
   onDelete: () => void;
   onStatusChange?: (status: Project['status']) => void;
   onPickedUpChange?: (pickedUp: boolean) => void;
+  onClose?: () => void;
 }
 
 const ProjectDetailContent = ({
@@ -18,7 +19,8 @@ const ProjectDetailContent = ({
   onEdit,
   onDelete,
   onStatusChange,
-  onPickedUpChange
+  onPickedUpChange,
+  onClose
 }: ProjectDetailContentProps) => {
   const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
   
@@ -32,6 +34,7 @@ const ProjectDetailContent = ({
           onEdit={onEdit}
           onDelete={onDelete}
           onStatusChange={onStatusChange}
+          onClose={onClose}
         />
         
         {expandedPhoto && (
