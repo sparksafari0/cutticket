@@ -34,9 +34,9 @@ const ProjectInfo = ({
         <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
       </div>
       
-      <ProjectImageDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
-      
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
+      
+      <ProjectImageDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
       <ProjectNotes project={project} />
       
