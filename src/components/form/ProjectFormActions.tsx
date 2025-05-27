@@ -27,15 +27,15 @@ export const ProjectFormActions = ({
   return (
     <>
       {onCancel && (
-        <div className="fixed top-4 right-4 z-20">
+        <div className="fixed top-2 right-2 z-50 sm:top-4 sm:right-4">
           <Button 
             type="button" 
             variant="ghost" 
             size="icon" 
             onClick={handleCloseClick} 
-            className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            className="h-10 w-10 sm:h-8 sm:w-8 bg-background/90 backdrop-blur-sm border border-border/50 rounded-full shadow-lg hover:bg-background/95 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5 sm:h-4 sm:w-4" />
             <span className="sr-only">Close</span>
           </Button>
         </div>
