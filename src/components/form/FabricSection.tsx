@@ -175,7 +175,10 @@ export const FabricSection = ({ form }: FabricSectionProps) => {
               <FormControl>
                 <Input 
                   placeholder="Other (e.g., blue cotton)" 
-                  {...field}
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  name={field.name}
                   className="text-sm"
                 />
               </FormControl>
@@ -208,7 +211,12 @@ export const FabricSection = ({ form }: FabricSectionProps) => {
           control={form.control}
           name={imageField}
           render={({ field }) => (
-            <input type="hidden" {...field} />
+            <input 
+              type="hidden" 
+              value={field.value || ''} 
+              onChange={field.onChange}
+              name={field.name}
+            />
           )}
         />
       </div>
