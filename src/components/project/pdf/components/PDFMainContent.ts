@@ -91,7 +91,7 @@ export class PDFMainContent {
     fabricGrid.style.display = 'grid';
     fabricGrid.style.gridTemplateColumns = '1fr 1fr';
     fabricGrid.style.gap = '12px';
-    fabricGrid.style.height = 'calc(100% - 260px)'; // Adjust height to give more space
+    fabricGrid.style.flex = '1';
 
     const fabricItems = [
       { label: 'SELF', image: this.project.fabricSelfImage, text: this.project.fabricSelfText },
@@ -120,16 +120,8 @@ export class PDFMainContent {
     label.style.textAlign = 'center';
     label.textContent = item.label;
 
-    // Make fabric boxes square by using aspect ratio 1:1
-    const imageContainer = document.createElement('div');
-    imageContainer.style.aspectRatio = '1';
-    imageContainer.style.backgroundColor = '#d1d5db';
+    const imageContainer = createImageContainer('160px');
     imageContainer.style.borderRadius = '6px';
-    imageContainer.style.display = 'flex';
-    imageContainer.style.alignItems = 'center';
-    imageContainer.style.justifyContent = 'center';
-    imageContainer.style.overflow = 'hidden';
-    imageContainer.style.position = 'relative';
 
     if (item.image) {
       const img = createImage(item.image, 'contain');
