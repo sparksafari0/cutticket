@@ -63,7 +63,7 @@ export class PDFMainContent {
 
   private createNotesSection(): HTMLElement {
     const notesContainer = document.createElement('div');
-    notesContainer.style.height = '240px';
+    notesContainer.style.height = '280px';
     notesContainer.style.backgroundColor = '#d1d5db';
     notesContainer.style.borderRadius = '8px';
     notesContainer.style.padding = '16px';
@@ -120,8 +120,16 @@ export class PDFMainContent {
     label.style.textAlign = 'center';
     label.textContent = item.label;
 
-    const imageContainer = createImageContainer('160px');
+    // Make fabric boxes square by using aspect ratio 1:1
+    const imageContainer = document.createElement('div');
+    imageContainer.style.aspectRatio = '1';
+    imageContainer.style.backgroundColor = '#d1d5db';
     imageContainer.style.borderRadius = '6px';
+    imageContainer.style.display = 'flex';
+    imageContainer.style.alignItems = 'center';
+    imageContainer.style.justifyContent = 'center';
+    imageContainer.style.overflow = 'hidden';
+    imageContainer.style.position = 'relative';
 
     if (item.image) {
       const img = createImage(item.image, 'contain');
