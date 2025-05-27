@@ -9,18 +9,16 @@ interface ProjectActionButtonsProps {
 
 const ProjectActionButtons = ({ onEdit, onClose }: ProjectActionButtonsProps) => {
   return (
-    <div className="fixed inset-x-0 bottom-0 p-6 bg-white border-t border-gray-200 z-50">
-      <div className="flex items-center justify-center gap-2 max-w-sm mx-auto">
-        <Button variant="outline" onClick={onEdit} className="flex-1 shadow-lg">
-          <Edit className="mr-2 h-4 w-4" />
-          Edit
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex items-center gap-2 z-10">
+      <Button variant="outline" onClick={onEdit} className="w-[130px] shadow-lg">
+        <Edit className="mr-2 h-4 w-4" />
+        Edit
+      </Button>
+      {onClose && (
+        <Button onClick={onClose} className="w-[130px] shadow-lg bg-black text-white hover:bg-gray-800">
+          Done
         </Button>
-        {onClose && (
-          <Button onClick={onClose} className="flex-1 shadow-lg bg-black text-white hover:bg-gray-800">
-            Done
-          </Button>
-        )}
-      </div>
+      )}
     </div>
   );
 };
