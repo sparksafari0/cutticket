@@ -13,7 +13,7 @@ const ProjectDetailHeader = ({
   title,
   project
 }: ProjectDetailHeaderProps) => {
-  return <div className="sticky top-0 right-0 left-0 bg-background z-40 pt-4 pb-4 flex flex-col px-0 py-0">
+  return <div className="sticky top-0 right-0 left-0 bg-background z-40 pt-0 pb-4 flex flex-col px-0 py-0 -mt-6 pt-6">
       <div className="flex items-center justify-between mb-2">
         <DialogHeader className="p-0">
           <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
