@@ -7,6 +7,7 @@ import ProjectDaysLeft from './ProjectDaysLeft';
 import ProjectNotes from './ProjectNotes';
 import ProjectActionButtons from './ProjectActionButtons';
 import ProjectFabricDisplay from './ProjectFabricDisplay';
+import GenerateCutTicketButton from './GenerateCutTicketButton';
 
 interface ProjectInfoProps {
   project: Project;
@@ -29,14 +30,22 @@ const ProjectInfo = ({
 }: ProjectInfoProps) => {
   return (
     <div className="space-y-4 py-0">
-      <div className="flex gap-3">
-        <div className="flex-1">
-          <ProjectDaysLeft project={project} />
-        </div>
-        <div className="flex-1">
+      {project.status === 'completed' ? (
+        // Full width status selector for completed projects
+        <div>
           <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
         </div>
-      </div>
+      ) : (
+        // Two column layout for non-completed projects
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <ProjectDaysLeft project={project} />
+          </div>
+          <div className="flex-1">
+            <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
+          </div>
+        </div>
+      )}
       
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
       
@@ -45,6 +54,8 @@ const ProjectInfo = ({
       <ProjectFabricDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
       <ProjectNotes project={project} />
+      
+      <GenerateCutTicketButton project={project} />
       
       <ProjectActionButtons onEdit={onEdit} onClose={onClose} />
     </div>
