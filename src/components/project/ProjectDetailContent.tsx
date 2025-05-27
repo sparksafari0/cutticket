@@ -1,8 +1,10 @@
+
 import { Project } from '@/types/project';
 import ProjectInfo from './ProjectInfo';
 import ProjectImageView from './ProjectImageView';
 import ProjectActions from './ProjectActions';
 import { useState } from 'react';
+
 interface ProjectDetailContentProps {
   project: Project;
   onEdit: () => void;
@@ -11,6 +13,7 @@ interface ProjectDetailContentProps {
   onPickedUpChange?: (pickedUp: boolean) => void;
   onClose?: () => void;
 }
+
 const ProjectDetailContent = ({
   project,
   onEdit,
@@ -20,12 +23,29 @@ const ProjectDetailContent = ({
   onClose
 }: ProjectDetailContentProps) => {
   const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
-  return <div className="pt-28 space-y-4 py-0">
+
+  return (
+    <div className="space-y-4 py-0">
       <div>
-        <ProjectInfo project={project} onSetExpandedPhoto={setExpandedPhoto} onPickedUpChange={onPickedUpChange} onEdit={onEdit} onDelete={onDelete} onStatusChange={onStatusChange} onClose={onClose} />
+        <ProjectInfo 
+          project={project} 
+          onSetExpandedPhoto={setExpandedPhoto} 
+          onPickedUpChange={onPickedUpChange} 
+          onEdit={onEdit} 
+          onDelete={onDelete} 
+          onStatusChange={onStatusChange} 
+          onClose={onClose} 
+        />
         
-        {expandedPhoto && <ProjectImageView image={expandedPhoto} onClose={() => setExpandedPhoto(null)} />}
+        {expandedPhoto && (
+          <ProjectImageView 
+            image={expandedPhoto} 
+            onClose={() => setExpandedPhoto(null)} 
+          />
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ProjectDetailContent;
