@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import ProjectImageDisplay from './ProjectImageDisplay';
 import ProjectStatusSelector from './ProjectStatusSelector';
@@ -7,7 +6,6 @@ import ProjectDaysLeft from './ProjectDaysLeft';
 import ProjectNotes from './ProjectNotes';
 import ProjectActionButtons from './ProjectActionButtons';
 import ProjectFabricDisplay from './ProjectFabricDisplay';
-
 interface ProjectInfoProps {
   project: Project;
   onSetExpandedPhoto: (photo: string) => void;
@@ -17,18 +15,16 @@ interface ProjectInfoProps {
   onStatusChange?: (status: Project['status']) => void;
   onClose?: () => void;
 }
-
-const ProjectInfo = ({ 
-  project, 
-  onSetExpandedPhoto, 
+const ProjectInfo = ({
+  project,
+  onSetExpandedPhoto,
   onPickedUpChange,
   onEdit,
   onDelete,
   onStatusChange,
   onClose
 }: ProjectInfoProps) => {
-  return (
-    <div className="pt-28 space-y-4 py-0">
+  return <div className="pt-28 space-y-4 py-0">
       <div className="flex gap-3">
         <div className="flex-1">
           <ProjectDaysLeft project={project} />
@@ -47,8 +43,6 @@ const ProjectInfo = ({
       <ProjectNotes project={project} />
       
       <ProjectActionButtons onEdit={onEdit} onClose={onClose} />
-    </div>
-  );
+    </div>;
 };
-
 export default ProjectInfo;
