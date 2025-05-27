@@ -16,6 +16,14 @@ export const projectFormSchema = z.object({
   imageUrl: z.string().optional(),
   referencePhotos: z.array(z.string()).optional(),
   pickedUp: z.boolean().default(false),
+  fabricSelfImage: z.string().optional(),
+  fabricSelfText: z.string().optional(),
+  fabricCombo1Image: z.string().optional(),
+  fabricCombo1Text: z.string().optional(),
+  fabricCombo2Image: z.string().optional(),
+  fabricCombo2Text: z.string().optional(),
+  fabricLiningImage: z.string().optional(),
+  fabricLiningText: z.string().optional(),
 });
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;

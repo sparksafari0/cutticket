@@ -11,6 +11,14 @@ export interface Project {
   imageUrl?: string;
   referencePhotos?: string[];
   pickedUp?: boolean;
+  fabricSelfImage?: string;
+  fabricSelfText?: string;
+  fabricCombo1Image?: string;
+  fabricCombo1Text?: string;
+  fabricCombo2Image?: string;
+  fabricCombo2Text?: string;
+  fabricLiningImage?: string;
+  fabricLiningText?: string;
 }
 
 export type ProjectType = 'productions' | 'samples' | 'alterations' | 'other';

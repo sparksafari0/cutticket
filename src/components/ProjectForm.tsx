@@ -1,3 +1,4 @@
+
 import { Project } from '@/types/project';
 import {
   Dialog,
@@ -21,6 +22,7 @@ import { NotesField } from './form/NotesField';
 import { ReferencePhotosField } from './form/ReferencePhotosField';
 import DeleteConfirmationDialog from './project/DeleteConfirmationDialog';
 import { StyleNumberField } from './form/StyleNumberField';
+import { FabricSection } from './form/FabricSection';
 
 interface ProjectFormProps {
   open: boolean;
@@ -46,6 +48,14 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
       imageUrl: '',
       referencePhotos: [],
       pickedUp: false,
+      fabricSelfImage: '',
+      fabricSelfText: '',
+      fabricCombo1Image: '',
+      fabricCombo1Text: '',
+      fabricCombo2Image: '',
+      fabricCombo2Text: '',
+      fabricLiningImage: '',
+      fabricLiningText: '',
     },
   });
   
@@ -62,6 +72,14 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
         imageUrl: initialData.imageUrl || '',
         referencePhotos: initialData.referencePhotos || [],
         pickedUp: initialData.pickedUp || false,
+        fabricSelfImage: initialData.fabricSelfImage || '',
+        fabricSelfText: initialData.fabricSelfText || '',
+        fabricCombo1Image: initialData.fabricCombo1Image || '',
+        fabricCombo1Text: initialData.fabricCombo1Text || '',
+        fabricCombo2Image: initialData.fabricCombo2Image || '',
+        fabricCombo2Text: initialData.fabricCombo2Text || '',
+        fabricLiningImage: initialData.fabricLiningImage || '',
+        fabricLiningText: initialData.fabricLiningText || '',
       });
       
       if (initialData.imageUrl) {
@@ -81,6 +99,14 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
         imageUrl: '',
         referencePhotos: [],
         pickedUp: false,
+        fabricSelfImage: '',
+        fabricSelfText: '',
+        fabricCombo1Image: '',
+        fabricCombo1Text: '',
+        fabricCombo2Image: '',
+        fabricCombo2Text: '',
+        fabricLiningImage: '',
+        fabricLiningText: '',
       });
       setImagePreview(null);
     }
@@ -122,6 +148,8 @@ export const ProjectForm = ({ open, onOpenChange, onSubmit, initialData, onDelet
                 />
                 
                 <ReferencePhotosField form={form} />
+
+                <FabricSection form={form} />
 
                 <TitleField form={form} />
                 <StyleNumberField form={form} />

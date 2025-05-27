@@ -13,6 +13,14 @@ export type Database = {
         Row: {
           created_at: string
           due_date: string
+          fabric_combo1_image: string | null
+          fabric_combo1_text: string | null
+          fabric_combo2_image: string | null
+          fabric_combo2_text: string | null
+          fabric_lining_image: string | null
+          fabric_lining_text: string | null
+          fabric_self_image: string | null
+          fabric_self_text: string | null
           id: string
           image_url: string | null
           notes: string | null
@@ -27,6 +35,14 @@ export type Database = {
         Insert: {
           created_at?: string
           due_date: string
+          fabric_combo1_image?: string | null
+          fabric_combo1_text?: string | null
+          fabric_combo2_image?: string | null
+          fabric_combo2_text?: string | null
+          fabric_lining_image?: string | null
+          fabric_lining_text?: string | null
+          fabric_self_image?: string | null
+          fabric_self_text?: string | null
           id?: string
           image_url?: string | null
           notes?: string | null
@@ -41,6 +57,14 @@ export type Database = {
         Update: {
           created_at?: string
           due_date?: string
+          fabric_combo1_image?: string | null
+          fabric_combo1_text?: string | null
+          fabric_combo2_image?: string | null
+          fabric_combo2_text?: string | null
+          fabric_lining_image?: string | null
+          fabric_lining_text?: string | null
+          fabric_self_image?: string | null
+          fabric_self_text?: string | null
           id?: string
           image_url?: string | null
           notes?: string | null

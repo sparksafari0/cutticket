@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from "@/integrations/supabase/client";
 import { Project } from '@/types/project';
@@ -54,6 +55,14 @@ export function useProjects() {
       if (data.imageUrl !== undefined) updateData.image_url = data.imageUrl;
       if (data.referencePhotos !== undefined) updateData.reference_photos = data.referencePhotos;
       if (data.pickedUp !== undefined) updateData.picked_up = data.pickedUp;
+      if (data.fabricSelfImage !== undefined) updateData.fabric_self_image = data.fabricSelfImage;
+      if (data.fabricSelfText !== undefined) updateData.fabric_self_text = data.fabricSelfText;
+      if (data.fabricCombo1Image !== undefined) updateData.fabric_combo1_image = data.fabricCombo1Image;
+      if (data.fabricCombo1Text !== undefined) updateData.fabric_combo1_text = data.fabricCombo1Text;
+      if (data.fabricCombo2Image !== undefined) updateData.fabric_combo2_image = data.fabricCombo2Image;
+      if (data.fabricCombo2Text !== undefined) updateData.fabric_combo2_text = data.fabricCombo2Text;
+      if (data.fabricLiningImage !== undefined) updateData.fabric_lining_image = data.fabricLiningImage;
+      if (data.fabricLiningText !== undefined) updateData.fabric_lining_text = data.fabricLiningText;
       
       console.log("Updating project with ID:", data.id);
       console.log("Update data:", updateData);

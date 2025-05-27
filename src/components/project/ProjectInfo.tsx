@@ -6,6 +6,7 @@ import ProjectPickupStatus from './ProjectPickupStatus';
 import ProjectDaysLeft from './ProjectDaysLeft';
 import ProjectNotes from './ProjectNotes';
 import ProjectActionButtons from './ProjectActionButtons';
+import ProjectFabricDisplay from './ProjectFabricDisplay';
 
 interface ProjectInfoProps {
   project: Project;
@@ -37,6 +38,8 @@ const ProjectInfo = ({
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
       
       <ProjectImageDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
+      
+      <ProjectFabricDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
       <ProjectNotes project={project} />
       
