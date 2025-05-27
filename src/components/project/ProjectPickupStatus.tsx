@@ -1,6 +1,6 @@
 
 import { Check, X } from 'lucide-react';
-import { Toggle } from '@/components/ui/toggle';
+import { Button } from '@/components/ui/button';
 import { Project } from '@/types/project';
 
 interface ProjectPickupStatusProps {
@@ -12,40 +12,36 @@ const ProjectPickupStatus = ({ project, onPickedUpChange }: ProjectPickupStatusP
   if (project.status !== 'completed') return null;
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-muted-foreground">Picked Up:</span>
+    <div className="space-y-3">
+      <span className="text-muted-foreground text-sm">Pickup Status:</span>
       {onPickedUpChange ? (
-        <div className="flex gap-2">
-          <Toggle
+        <div className="grid grid-cols-2 gap-2">
+          <Button
             variant="outline"
-            pressed={project.pickedUp === true}
-            onPressedChange={() => onPickedUpChange(true)}
-            className={`w-16 ${project.pickedUp === true ? 'bg-green-100 border-green-500 ring-1 ring-green-500' : ''}`}
-            aria-label="Mark as picked up"
+            onClick={() => onPickedUpChange(true)}
+            className={`w-full justify-start ${project.pickedUp === true ? 'bg-green-100 border-green-500 ring-1 ring-green-500' : ''}`}
           >
-            <Check className={`mr-1 h-4 w-4 ${project.pickedUp === true ? 'text-green-600' : ''}`} /> 
-            <span className={project.pickedUp === true ? 'text-green-600 font-medium' : ''}>Yes</span>
-          </Toggle>
-          <Toggle
+            <Check className={`mr-2 h-4 w-4 ${project.pickedUp === true ? 'text-green-600' : ''}`} /> 
+            <span className={project.pickedUp === true ? 'text-green-600 font-medium' : ''}>Picked up</span>
+          </Button>
+          <Button
             variant="outline"
-            pressed={project.pickedUp === false}
-            onPressedChange={() => onPickedUpChange(false)}
-            className={`w-16 ${project.pickedUp === false ? 'bg-red-100 border-red-500 ring-1 ring-red-500' : ''}`}
-            aria-label="Mark as not picked up"
+            onClick={() => onPickedUpChange(false)}
+            className={`w-full justify-start ${project.pickedUp === false ? 'bg-red-100 border-red-500 ring-1 ring-red-500' : ''}`}
           >
-            <X className={`mr-1 h-4 w-4 ${project.pickedUp === false ? 'text-red-600' : ''}`} /> 
-            <span className={project.pickedUp === false ? 'text-red-600 font-medium' : ''}>No</span>
-          </Toggle>
+            <X className={`mr-2 h-4 w-4 ${project.pickedUp === false ? 'text-red-600' : ''}`} /> 
+            <span className={project.pickedUp === false ? 'text-red-600 font-medium' : ''}>Not picked up</span>
+          </Button>
         </div>
       ) : (
         <div className="flex items-center">
           {project.pickedUp ? (
             <span className="flex items-center text-green-600">
-              <Check className="mr-1 h-4 w-4" /> Yes
+              <Check className="mr-2 h-4 w-4" /> Picked up
             </span>
           ) : (
             <span className="flex items-center text-red-600">
-              <X className="mr-1 h-4 w-4" /> No
+              <X className="mr-2 h-4 w-4" /> Not picked up
             </span>
           )}
         </div>
