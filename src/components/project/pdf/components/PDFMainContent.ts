@@ -122,6 +122,7 @@ export class PDFMainContent {
 
     const imageContainer = createImageContainer('160px');
     imageContainer.style.borderRadius = '6px';
+    imageContainer.style.aspectRatio = '1';
 
     if (item.image) {
       const img = createImage(item.image, 'contain');
