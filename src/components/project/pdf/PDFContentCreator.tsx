@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import { format } from 'date-fns';
 
@@ -119,7 +118,7 @@ export class PDFContentCreator {
       mainImage.src = this.project.imageUrl;
       mainImage.style.width = '100%';
       mainImage.style.height = '100%';
-      mainImage.style.objectFit = 'cover'; // Fill the container while maintaining aspect ratio
+      mainImage.style.objectFit = 'contain'; // No stretching, maintain aspect ratio
       mainImageContainer.appendChild(mainImage);
     } else {
       const placeholder = document.createElement('div');
@@ -210,7 +209,7 @@ export class PDFContentCreator {
     label.textContent = item.label;
 
     const imageContainer = document.createElement('div');
-    imageContainer.style.height = '80px'; // Fixed smaller height instead of aspect ratio
+    imageContainer.style.height = '160px'; // Double the previous height to make it square-like
     imageContainer.style.backgroundColor = '#d1d5db';
     imageContainer.style.borderRadius = '6px'; // Slightly smaller border radius
     imageContainer.style.display = 'flex';
@@ -224,7 +223,7 @@ export class PDFContentCreator {
       img.src = item.image;
       img.style.width = '100%';
       img.style.height = '100%';
-      img.style.objectFit = 'cover'; // Fill the container while maintaining aspect ratio
+      img.style.objectFit = 'contain'; // No stretching, maintain aspect ratio
       imageContainer.appendChild(img);
     } else if (item.text) {
       const textDiv = document.createElement('div');
@@ -286,7 +285,7 @@ export class PDFContentCreator {
     img.src = photo;
     img.style.width = '100%';
     img.style.height = '100%';
-    img.style.objectFit = 'cover'; // Fill the container while maintaining aspect ratio
+    img.style.objectFit = 'contain'; // No stretching, maintain aspect ratio
     img.style.position = 'relative';
     img.style.zIndex = '2';
 
