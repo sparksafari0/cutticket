@@ -63,7 +63,7 @@ export class PDFMainContent {
 
   private createNotesSection(): HTMLElement {
     const notesContainer = document.createElement('div');
-    notesContainer.style.height = '280px';
+    notesContainer.style.height = '240px';
     notesContainer.style.backgroundColor = '#d1d5db';
     notesContainer.style.borderRadius = '8px';
     notesContainer.style.padding = '16px';
@@ -91,7 +91,7 @@ export class PDFMainContent {
     fabricGrid.style.display = 'grid';
     fabricGrid.style.gridTemplateColumns = '1fr 1fr';
     fabricGrid.style.gap = '12px';
-    fabricGrid.style.flex = '1';
+    fabricGrid.style.height = 'calc(100% - 260px)'; // Adjust height to give more space
 
     const fabricItems = [
       { label: 'SELF', image: this.project.fabricSelfImage, text: this.project.fabricSelfText },
