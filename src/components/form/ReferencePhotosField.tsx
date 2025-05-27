@@ -73,7 +73,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
     }
   };
 
-  const handleMultiplePhotoUpload = async (files: FileList) => {
+  const handleMultiplePhotoUpload = async (files: File[]) => {
     const maxPhotosToUpload = Math.min(files.length, 6 - referencePhotos.length);
     
     if (maxPhotosToUpload <= 0) {
@@ -84,7 +84,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
     setUploading(true);
     
     try {
-      const uploadPromises = Array.from(files).slice(0, maxPhotosToUpload).map(async (file) => {
+      const uploadPromises = files.slice(0, maxPhotosToUpload).map(async (file) => {
         if (!file.type.startsWith('image/')) return null;
         
         // Create a unique file path
@@ -130,7 +130,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
       if (files.length === 1) {
         await handlePhotoUpload(files[0]);
       } else {
-        await handleMultiplePhotoUpload(files);
+        await handleMultiplePhotoUpload(Array.from(files));
       }
     }
   };
@@ -170,12 +170,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
       if (imageFiles.length === 1) {
         await handlePhotoUpload(imageFiles[0]);
       } else {
-        // Convert array to FileList-like object
-        const fileList = {
-          length: imageFiles.length,
-          ...imageFiles
-        } as FileList;
-        await handleMultiplePhotoUpload(fileList);
+        await handleMultiplePhotoUpload(imageFiles);
       }
     }
   };
