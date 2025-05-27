@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Plus, X, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,14 +24,14 @@ interface ReferencePhotosFieldProps {
 
 export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
   const [uploading, setUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   
   // Get current reference photos from form
   const referencePhotos = form.watch('referencePhotos') || [];
   
-  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handlePhotoUpload = async (file: File) => {
     if (!file) return;
     
     try {
@@ -72,10 +73,47 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
     }
   };
 
+  const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await handlePhotoUpload(file);
+    }
+  };
+
   const handleRemovePhoto = (index: number) => {
     const updatedPhotos = [...referencePhotos];
     updatedPhotos.splice(index, 1);
     form.setValue('referencePhotos', updatedPhotos);
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find(file => file.type.startsWith('image/'));
+    
+    if (imageFile) {
+      await handlePhotoUpload(imageFile);
+    }
   };
 
   const triggerFileUpload = () => {
@@ -95,7 +133,15 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
           <FormLabel>Reference Photos (Optional, max 6)</FormLabel>
           
           {/* Photo Grid */}
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mb-2">
+          <div 
+            className={`grid grid-cols-3 md:grid-cols-4 gap-2 mb-2 p-2 border-2 border-dashed rounded-md transition-colors ${
+              isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+            }`}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+          >
             {referencePhotos.map((photo, index) => (
               <div key={index} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden">
                 <img 
@@ -157,6 +203,13 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
                 </Popover>
               </div>
             )}
+            
+            {/* Drag and drop hint */}
+            {referencePhotos.length === 0 && (
+              <div className="col-span-full flex items-center justify-center py-4 text-gray-500 text-sm">
+                {isDragOver ? 'Drop images here' : 'Drag & drop images here or use the + button'}
+              </div>
+            )}
           </div>
           
           {/* Hidden file inputs */}
@@ -166,7 +219,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
             ref={fileInputRef}
             accept="image/*"
             className="hidden"
-            onChange={handlePhotoUpload}
+            onChange={handleFileInputChange}
             disabled={uploading}
           />
           <input
@@ -176,7 +229,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
             accept="image/*"
             capture="environment"
             className="hidden"
-            onChange={handlePhotoUpload}
+            onChange={handleFileInputChange}
             disabled={uploading}
           />
           

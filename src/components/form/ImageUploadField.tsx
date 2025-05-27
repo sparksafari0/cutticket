@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Image, Upload, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,22 +7,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { UseFormReturn } from 'react-hook-form';
 import { ProjectFormValues } from '@/schemas/projectSchema';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
 interface ImageUploadFieldProps {
   form: UseFormReturn<ProjectFormValues>;
   imagePreview: string | null;
   setImagePreview: (url: string | null) => void;
 }
+
 export const ImageUploadField = ({
   form,
   imagePreview,
   setImagePreview
 }: ImageUploadFieldProps) => {
   const [uploading, setUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+
+  const handleImageUpload = async (file: File) => {
     if (!file) return;
+
     try {
       setUploading(true);
 
@@ -56,27 +61,103 @@ export const ImageUploadField = ({
       setUploading(false);
     }
   };
+
+  const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await handleImageUpload(file);
+    }
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find(file => file.type.startsWith('image/'));
+    
+    if (imageFile) {
+      await handleImageUpload(imageFile);
+    }
+  };
+
   const triggerFileUpload = () => {
     fileInputRef.current?.click();
   };
+
   const triggerCameraCapture = () => {
     cameraInputRef.current?.click();
   };
-  return <FormField control={form.control} name="imageUrl" render={({
-    field
-  }) => <FormItem>
+
+  return (
+    <FormField 
+      control={form.control} 
+      name="imageUrl" 
+      render={({ field }) => (
+        <FormItem>
           <FormLabel>Project Image</FormLabel>
           <div className="flex flex-col items-center gap-2">
-            <div className="relative w-full h-40 bg-gray-100 border rounded-md flex items-center justify-center overflow-hidden">
-              {imagePreview ? <img src={imagePreview} alt="Project preview" className="w-full h-full object-contain" /> : <div className="flex flex-col items-center justify-center text-gray-500">
+            <div 
+              className={`relative w-full h-40 bg-gray-100 border-2 border-dashed rounded-md flex items-center justify-center overflow-hidden transition-colors ${
+                isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
+              }`}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+            >
+              {imagePreview ? (
+                <img src={imagePreview} alt="Project preview" className="w-full h-full object-contain" />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-gray-500">
                   <Image className="h-10 w-10 mb-2" />
-                  <span>No image selected</span>
-                </div>}
+                  <span className="text-center">
+                    {isDragOver ? 'Drop image here' : 'No image selected'}
+                    <br />
+                    <span className="text-xs">Drag & drop an image here</span>
+                  </span>
+                </div>
+              )}
             </div>
             
             {/* Hidden file inputs */}
-            <input type="file" id="image-upload" ref={fileInputRef} accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
-            <input type="file" id="camera-capture" ref={cameraInputRef} accept="image/*" capture="environment" className="hidden" onChange={handleImageUpload} disabled={uploading} />
+            <input 
+              type="file" 
+              id="image-upload" 
+              ref={fileInputRef} 
+              accept="image/*" 
+              className="hidden" 
+              onChange={handleFileInputChange} 
+              disabled={uploading} 
+            />
+            <input 
+              type="file" 
+              id="camera-capture" 
+              ref={cameraInputRef} 
+              accept="image/*" 
+              capture="environment" 
+              className="hidden" 
+              onChange={handleFileInputChange} 
+              disabled={uploading} 
+            />
             
             {/* Dropdown for image options */}
             <Popover>
@@ -101,5 +182,8 @@ export const ImageUploadField = ({
             <input type="hidden" {...field} />
           </div>
           <FormMessage />
-        </FormItem>} />;
+        </FormItem>
+      )} 
+    />
+  );
 };
