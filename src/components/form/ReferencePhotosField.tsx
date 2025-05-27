@@ -73,10 +73,65 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
     }
   };
 
+  const handleMultiplePhotoUpload = async (files: FileList) => {
+    const maxPhotosToUpload = Math.min(files.length, 6 - referencePhotos.length);
+    
+    if (maxPhotosToUpload <= 0) {
+      console.error('Maximum 6 reference photos allowed');
+      return;
+    }
+
+    setUploading(true);
+    
+    try {
+      const uploadPromises = Array.from(files).slice(0, maxPhotosToUpload).map(async (file) => {
+        if (!file.type.startsWith('image/')) return null;
+        
+        // Create a unique file path
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+        const filePath = `reference-photos/${fileName}`;
+        
+        // Upload the file to Supabase Storage
+        const { error: uploadError } = await supabase.storage
+          .from('project-images')
+          .upload(filePath, file);
+        
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError);
+          return null;
+        }
+
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('project-images')
+          .getPublicUrl(filePath);
+        
+        return publicUrl;
+      });
+
+      const uploadedUrls = await Promise.all(uploadPromises);
+      const successfulUploads = uploadedUrls.filter(url => url !== null);
+      
+      if (successfulUploads.length > 0) {
+        const updatedPhotos = [...referencePhotos, ...successfulUploads];
+        form.setValue('referencePhotos', updatedPhotos);
+      }
+    } catch (error) {
+      console.error('Error uploading reference photos:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      await handlePhotoUpload(file);
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      if (files.length === 1) {
+        await handlePhotoUpload(files[0]);
+      } else {
+        await handleMultiplePhotoUpload(files);
+      }
     }
   };
 
@@ -109,10 +164,19 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
     setIsDragOver(false);
 
     const files = Array.from(e.dataTransfer.files);
-    const imageFile = files.find(file => file.type.startsWith('image/'));
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
     
-    if (imageFile) {
-      await handlePhotoUpload(imageFile);
+    if (imageFiles.length > 0) {
+      if (imageFiles.length === 1) {
+        await handlePhotoUpload(imageFiles[0]);
+      } else {
+        // Convert array to FileList-like object
+        const fileList = {
+          length: imageFiles.length,
+          ...imageFiles
+        } as FileList;
+        await handleMultiplePhotoUpload(fileList);
+      }
     }
   };
 
@@ -186,7 +250,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
                         className="flex items-center gap-2"
                       >
                         <Upload size={16} />
-                        Upload Photo
+                        Upload Photo(s)
                       </Button>
                       <Button
                         type="button"
@@ -218,6 +282,7 @@ export const ReferencePhotosField = ({ form }: ReferencePhotosFieldProps) => {
             id="reference-upload"
             ref={fileInputRef}
             accept="image/*"
+            multiple
             className="hidden"
             onChange={handleFileInputChange}
             disabled={uploading}
