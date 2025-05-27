@@ -105,7 +105,7 @@ export class PDFContentCreator {
 
     const mainImageContainer = document.createElement('div');
     mainImageContainer.style.width = '100%';
-    mainImageContainer.style.height = '400px';
+    mainImageContainer.style.height = '100%'; // Fill entire available height
     mainImageContainer.style.backgroundColor = '#d1d5db';
     mainImageContainer.style.borderRadius = '8px';
     mainImageContainer.style.display = 'flex';
@@ -119,7 +119,7 @@ export class PDFContentCreator {
       mainImage.src = this.project.imageUrl;
       mainImage.style.width = '100%';
       mainImage.style.height = '100%';
-      mainImage.style.objectFit = 'contain';
+      mainImage.style.objectFit = 'cover'; // Fill the container while maintaining aspect ratio
       mainImageContainer.appendChild(mainImage);
     } else {
       const placeholder = document.createElement('div');
@@ -152,7 +152,7 @@ export class PDFContentCreator {
 
   private createNotesSection(): HTMLElement {
     const notesContainer = document.createElement('div');
-    notesContainer.style.height = '160px';
+    notesContainer.style.height = '240px'; // Increased from 160px to make it longer
     notesContainer.style.backgroundColor = '#d1d5db';
     notesContainer.style.borderRadius = '8px';
     notesContainer.style.padding = '16px';
@@ -201,18 +201,18 @@ export class PDFContentCreator {
     const fabricItem = document.createElement('div');
     fabricItem.style.display = 'flex';
     fabricItem.style.flexDirection = 'column';
-    fabricItem.style.gap = '8px';
+    fabricItem.style.gap = '6px'; // Reduced gap
 
     const label = document.createElement('div');
-    label.style.fontSize = '14px';
+    label.style.fontSize = '12px'; // Reduced font size
     label.style.fontWeight = 'bold';
     label.style.textAlign = 'center';
     label.textContent = item.label;
 
     const imageContainer = document.createElement('div');
-    imageContainer.style.aspectRatio = '1';
+    imageContainer.style.height = '80px'; // Fixed smaller height instead of aspect ratio
     imageContainer.style.backgroundColor = '#d1d5db';
-    imageContainer.style.borderRadius = '8px';
+    imageContainer.style.borderRadius = '6px'; // Slightly smaller border radius
     imageContainer.style.display = 'flex';
     imageContainer.style.alignItems = 'center';
     imageContainer.style.justifyContent = 'center';
@@ -224,13 +224,13 @@ export class PDFContentCreator {
       img.src = item.image;
       img.style.width = '100%';
       img.style.height = '100%';
-      img.style.objectFit = 'cover';
+      img.style.objectFit = 'cover'; // Fill the container while maintaining aspect ratio
       imageContainer.appendChild(img);
     } else if (item.text) {
       const textDiv = document.createElement('div');
-      textDiv.style.fontSize = '12px';
+      textDiv.style.fontSize = '10px'; // Reduced font size
       textDiv.style.textAlign = 'center';
-      textDiv.style.padding = '8px';
+      textDiv.style.padding = '6px'; // Reduced padding
       textDiv.style.wordBreak = 'break-words';
       textDiv.textContent = item.text;
       imageContainer.appendChild(textDiv);
@@ -286,7 +286,7 @@ export class PDFContentCreator {
     img.src = photo;
     img.style.width = '100%';
     img.style.height = '100%';
-    img.style.objectFit = 'contain';
+    img.style.objectFit = 'cover'; // Fill the container while maintaining aspect ratio
     img.style.position = 'relative';
     img.style.zIndex = '2';
 
