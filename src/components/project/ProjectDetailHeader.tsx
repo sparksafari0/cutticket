@@ -1,21 +1,16 @@
-
 import { DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { X } from 'lucide-react';
 import { Project } from '@/types/project';
 import ProjectDetails from './ProjectDetails';
-
 interface ProjectDetailHeaderProps {
   title: string;
   project: Project;
 }
-
-const ProjectDetailHeader = ({ 
+const ProjectDetailHeader = ({
   title,
   project
 }: ProjectDetailHeaderProps) => {
-  
-  return (
-    <div className="sticky top-0 right-0 left-0 bg-background z-10 pt-6 pb-2 px-6 flex flex-col">
+  return <div className="sticky top-0 right-0 left-0 bg-background z-10 pt-6 pb-2 flex flex-col px-0 py-0">
       <div className="flex items-center justify-between mb-3">
         <DialogHeader className="p-0">
           <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
@@ -30,8 +25,6 @@ const ProjectDetailHeader = ({
       </div>
       
       <ProjectDetails project={project} />
-    </div>
-  );
+    </div>;
 };
-
 export default ProjectDetailHeader;
