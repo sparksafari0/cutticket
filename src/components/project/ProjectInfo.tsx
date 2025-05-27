@@ -30,22 +30,14 @@ const ProjectInfo = ({
 }: ProjectInfoProps) => {
   return (
     <div className="space-y-4 py-0">
-      {project.status === 'completed' ? (
-        // Full width status selector for completed projects
-        <div>
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <ProjectDaysLeft project={project} />
+        </div>
+        <div className="flex-1">
           <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
         </div>
-      ) : (
-        // Two column layout for non-completed projects
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <ProjectDaysLeft project={project} />
-          </div>
-          <div className="flex-1">
-            <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
-          </div>
-        </div>
-      )}
+      </div>
       
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
       
