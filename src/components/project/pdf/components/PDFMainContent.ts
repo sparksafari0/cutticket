@@ -1,4 +1,3 @@
-
 import { Project } from '@/types/project';
 import { createImageContainer, createImage, createPlaceholder } from '../utils/pdfStyles';
 
@@ -89,7 +88,7 @@ export class PDFMainContent {
   private createFabricGrid(): HTMLElement {
     const fabricGrid = document.createElement('div');
     fabricGrid.style.display = 'grid';
-    fabricGrid.style.gridTemplateColumns = '1fr 1fr';
+    fabricGrid.style.gridTemplateColumns = '120px 120px'; // Fixed width columns for square boxes
     fabricGrid.style.gap = '12px';
     fabricGrid.style.flex = '1';
 
@@ -120,8 +119,9 @@ export class PDFMainContent {
     label.style.textAlign = 'center';
     label.textContent = item.label;
 
-    const imageContainer = createImageContainer('160px');
+    const imageContainer = createImageContainer('120px'); // Square container
     imageContainer.style.borderRadius = '6px';
+    imageContainer.style.width = '120px'; // Fixed width to match height
     imageContainer.style.aspectRatio = '1';
 
     if (item.image) {
