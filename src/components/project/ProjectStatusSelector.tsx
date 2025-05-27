@@ -13,22 +13,22 @@ const ProjectStatusSelector = ({ project, onStatusChange }: ProjectStatusSelecto
 
   return (
     <div className="flex justify-end space-x-2 pt-15 py-0">
-      <div className="relative z-[5] w-full">
+      <div className="relative z-50 w-full">
         <Select defaultValue={project.status} onValueChange={value => {
           console.log("Value selected:", value);
           if (onStatusChange) {
             onStatusChange(value as Project['status']);
           }
         }}>
-          <SelectTrigger className="w-full text-center justify-center" style={{
+          <SelectTrigger className="w-full text-center justify-center border border-gray-300" style={{
             backgroundColor: status?.color || 'transparent',
             color: 'black'
           }}>
             <SelectValue placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="z-[5] bg-white" position="popper">
+          <SelectContent className="z-50 bg-white border border-gray-300 shadow-lg" position="popper">
             {PROJECT_STATUSES.map(statusOption => 
-              <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer text-center justify-center" style={{
+              <SelectItem key={statusOption.value} value={statusOption.value} className="capitalize cursor-pointer text-center justify-center hover:bg-gray-100" style={{
                 backgroundColor: project.status === statusOption.value ? statusOption.color : undefined
               }}>
                 {statusOption.label}
