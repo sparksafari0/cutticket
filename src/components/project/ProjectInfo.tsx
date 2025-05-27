@@ -7,6 +7,7 @@ import ProjectDaysLeft from './ProjectDaysLeft';
 import ProjectNotes from './ProjectNotes';
 import ProjectActionButtons from './ProjectActionButtons';
 import ProjectFabricDisplay from './ProjectFabricDisplay';
+import GenerateCutTicketButton from './GenerateCutTicketButton';
 
 interface ProjectInfoProps {
   project: Project;
@@ -45,6 +46,8 @@ const ProjectInfo = ({
       <ProjectFabricDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
       <ProjectNotes project={project} />
+      
+      <GenerateCutTicketButton project={project} />
       
       <ProjectActionButtons onEdit={onEdit} onClose={onClose} />
     </div>
