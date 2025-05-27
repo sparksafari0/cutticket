@@ -22,7 +22,7 @@ const ProjectDetails = ({ project }: ProjectDetailsProps) => {
       </Badge>
       {project.styleNumber && (
         <Badge variant="secondary" className="text-sm px-3 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">
-          Style #{project.styleNumber}
+          {project.styleNumber}
         </Badge>
       )}
     </div>
