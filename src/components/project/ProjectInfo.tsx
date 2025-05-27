@@ -42,7 +42,8 @@ const ProjectInfo = ({
       <ProjectFabricDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
       <ProjectNotes project={project} />
-      
+
+      <div className="h-16"></div>
       <ProjectActionButtons onEdit={onEdit} onClose={onClose} />
     </div>
   );
