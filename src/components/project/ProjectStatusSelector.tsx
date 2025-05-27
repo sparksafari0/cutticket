@@ -13,7 +13,7 @@ const ProjectStatusSelector = ({ project, onStatusChange }: ProjectStatusSelecto
 
   return (
     <div className="flex justify-end space-x-2 pt-15 py-0">
-      <div className="relative z-50 w-full">
+      <div className="relative z-10 w-full">
         <Select defaultValue={project.status} onValueChange={value => {
           console.log("Value selected:", value);
           if (onStatusChange) {
