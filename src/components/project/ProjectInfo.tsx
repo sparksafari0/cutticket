@@ -29,10 +29,13 @@ const ProjectInfo = ({
 }: ProjectInfoProps) => {
   return (
     <div className="space-y-4">
-      <ProjectDaysLeft project={project} />
-      
-      <div className="-mt-2">
-        <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
+      <div className="flex gap-3">
+        <div className="flex-1">
+          <ProjectDaysLeft project={project} />
+        </div>
+        <div className="flex-1">
+          <ProjectStatusSelector project={project} onStatusChange={onStatusChange} />
+        </div>
       </div>
       
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
