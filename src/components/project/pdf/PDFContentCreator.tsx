@@ -27,8 +27,8 @@ export class PDFContentCreator {
 
   private createContainer(): HTMLElement {
     const container = document.createElement('div');
-    container.style.width = '794px'; // A4 width in pixels at 96 DPI
-    container.style.height = '1123px'; // A4 height in pixels at 96 DPI
+    container.style.width = '1123px'; // A4 landscape width in pixels at 96 DPI
+    container.style.height = '794px';  // A4 landscape height in pixels at 96 DPI
     container.style.padding = '40px';
     container.style.backgroundColor = '#f5f5f5';
     container.style.fontFamily = 'Arial, sans-serif';
@@ -69,11 +69,11 @@ export class PDFContentCreator {
     titleSection.appendChild(titleLine);
     titleSection.appendChild(styleLine);
 
-    // Date section
+    // Date section - using current date instead of due date
     const dateSection = document.createElement('div');
     dateSection.style.textAlign = 'right';
     dateSection.style.fontSize = '18px';
-    dateSection.innerHTML = `<strong>Date:</strong><br>${format(this.project.dueDate, 'MMM dd, yyyy')}`;
+    dateSection.innerHTML = `<strong>Date:</strong><br>${format(new Date(), 'MMM dd, yyyy')}`;
 
     header.appendChild(brand);
     header.appendChild(titleSection);

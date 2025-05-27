@@ -7,7 +7,8 @@ export const generateProjectPDF = async (
   project: Project, 
   createPDFContent: (pageType: 'main' | 'reference', referenceStartIndex?: number) => HTMLElement
 ) => {
-  const pdf = new jsPDF('p', 'pt', 'a4');
+  // Use landscape orientation for horizontal layout
+  const pdf = new jsPDF('l', 'pt', 'a4'); // 'l' for landscape
   let isFirstPage = true;
 
   // Generate main page
@@ -15,15 +16,17 @@ export const generateProjectPDF = async (
   document.body.appendChild(mainContent);
 
   const mainCanvas = await html2canvas(mainContent, {
-    width: 794,
-    height: 1123,
-    scale: 2,
+    width: 1123, // A4 landscape width
+    height: 794,  // A4 landscape height
+    scale: 1.5,   // Reduced scale to decrease file size
     useCORS: true,
-    allowTaint: true
+    allowTaint: true,
+    backgroundColor: '#ffffff'
   });
 
   if (!isFirstPage) pdf.addPage();
-  pdf.addImage(mainCanvas.toDataURL('image/png'), 'PNG', 0, 0, 595, 842);
+  // A4 landscape dimensions: 842 x 595 points
+  pdf.addImage(mainCanvas.toDataURL('image/jpeg', 0.8), 'JPEG', 0, 0, 842, 595);
   isFirstPage = false;
 
   document.body.removeChild(mainContent);
@@ -36,15 +39,16 @@ export const generateProjectPDF = async (
       document.body.appendChild(refContent);
 
       const refCanvas = await html2canvas(refContent, {
-        width: 794,
-        height: 1123,
-        scale: 2,
+        width: 1123,
+        height: 794,
+        scale: 1.5,
         useCORS: true,
-        allowTaint: true
+        allowTaint: true,
+        backgroundColor: '#ffffff'
       });
 
       pdf.addPage();
-      pdf.addImage(refCanvas.toDataURL('image/png'), 'PNG', 0, 0, 595, 842);
+      pdf.addImage(refCanvas.toDataURL('image/jpeg', 0.8), 'JPEG', 0, 0, 842, 595);
 
       document.body.removeChild(refContent);
     }
