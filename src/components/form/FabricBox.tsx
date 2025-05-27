@@ -1,6 +1,6 @@
 
 import { useState, useRef } from 'react';
-import { Plus, Upload, Camera } from 'lucide-react';
+import { Plus, Upload, Camera, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,6 +27,7 @@ interface FabricBoxProps {
 
 export const FabricBox = ({ form, fabricType }: FabricBoxProps) => {
   const [uploading, setUploading] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -74,6 +75,40 @@ export const FabricBox = ({ form, fabricType }: FabricBoxProps) => {
     }
   };
 
+  const handleRemovePhoto = () => {
+    form.setValue(imageFieldName, '');
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find(file => file.type.startsWith('image/'));
+    
+    if (imageFile) {
+      await handlePhotoUpload(imageFile);
+    }
+  };
+
   const triggerFileUpload = () => {
     fileInputRef.current?.click();
   };
@@ -87,52 +122,75 @@ export const FabricBox = ({ form, fabricType }: FabricBoxProps) => {
       <FormLabel className="text-sm font-medium">{fabricLabels[fabricType]}</FormLabel>
       
       {/* Image Upload Box */}
-      <div className="aspect-square bg-gray-100 rounded-md border-2 border-dashed border-gray-200 overflow-hidden">
+      <div 
+        className={`aspect-square bg-gray-100 rounded-md border-2 border-dashed overflow-hidden transition-colors ${
+          isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+        }`}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
         {imageValue ? (
-          <img 
-            src={imageValue} 
-            alt={`${fabricLabels[fabricType]} fabric`} 
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <img 
+              src={imageValue} 
+              alt={`${fabricLabels[fabricType]} fabric`} 
+              className="w-full h-full object-cover"
+            />
+            <Button
+              type="button"
+              size="icon"
+              variant="destructive"
+              className="absolute top-1 right-1 h-6 w-6"
+              onClick={handleRemovePhoto}
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full h-10 w-10"
-                  disabled={uploading}
-                >
-                  <Plus className="h-6 w-6 text-gray-400" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-2 bg-background">
-                <div className="flex flex-col gap-2">
+            {isDragOver ? (
+              <div className="text-blue-500 text-sm">Drop image here</div>
+            ) : (
+              <Popover>
+                <PopoverTrigger asChild>
                   <Button
                     type="button"
                     variant="ghost"
-                    onClick={triggerFileUpload}
+                    size="icon"
+                    className="rounded-full h-10 w-10"
                     disabled={uploading}
-                    className="flex items-center gap-2"
                   >
-                    <Upload size={16} />
-                    Upload Photo
+                    <Plus className="h-6 w-6 text-gray-400" />
                   </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={triggerCameraCapture}
-                    disabled={uploading}
-                    className="flex items-center gap-2"
-                  >
-                    <Camera size={16} />
-                    Take Photo
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-2 bg-background">
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={triggerFileUpload}
+                      disabled={uploading}
+                      className="flex items-center gap-2"
+                    >
+                      <Upload size={16} />
+                      Upload Photo
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={triggerCameraCapture}
+                      disabled={uploading}
+                      className="flex items-center gap-2"
+                    >
+                      <Camera size={16} />
+                      Take Photo
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
           </div>
         )}
       </div>
