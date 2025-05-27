@@ -28,7 +28,7 @@ const ProjectInfo = ({
   onClose
 }: ProjectInfoProps) => {
   return (
-    <div className="space-y-4">
+    <div className="pt-28 space-y-4 py-0">
       <div className="flex gap-3">
         <div className="flex-1">
           <ProjectDaysLeft project={project} />
