@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogClose
 } from "@/components/ui/dialog";
+import { useEffect } from 'react';
 
 interface ProjectImageViewProps {
   image: string | null;
@@ -12,7 +13,19 @@ interface ProjectImageViewProps {
 }
 
 const ProjectImageView = ({ image, onClose }: ProjectImageViewProps) => {
-  if (!image) return null;
+  const isPdfFile = (url: string) => {
+    return /\.pdf$/i.test(url);
+  };
+
+  useEffect(() => {
+    // If it's a PDF, open it in a new tab instead of showing in dialog
+    if (image && isPdfFile(image)) {
+      window.open(image, '_blank');
+      onClose(); // Close the dialog immediately
+    }
+  }, [image, onClose]);
+
+  if (!image || isPdfFile(image)) return null;
   
   return (
     <Dialog open={!!image} onOpenChange={onClose}>
