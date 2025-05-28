@@ -1,8 +1,8 @@
 
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Download } from 'lucide-react';
 import { GenerationResult } from '@/pages/GenerateSketch';
-import { useState } from 'react';
 
 interface SketchResultsProps {
   results: GenerationResult;
@@ -10,176 +10,91 @@ interface SketchResultsProps {
   isGenerating: boolean;
 }
 
-export const SketchResults = ({ results, onStartOver, isGenerating }: SketchResultsProps) => {
-  const [editablePrompt, setEditablePrompt] = useState(results.originalPrompt);
-
-  const handleEditAndCreateAgain = (type: 'visualized' | 'flatSketch') => {
-    // This would trigger a new generation with the edited prompt
-    console.log(`Regenerating ${type} with prompt:`, editablePrompt);
-    // You can implement this functionality later
+export const SketchResults = ({ 
+  results, 
+  onStartOver, 
+  isGenerating 
+}: SketchResultsProps) => {
+  const downloadImage = (imageUrl: string, filename: string) => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
+  if (isGenerating) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p className="text-lg font-medium">Generating your sketches...</p>
+        <p className="text-sm text-gray-500">This may take a few moments</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="text-center">
-        <h2 className="text-xl font-semibold mb-2">
-          {window.innerWidth >= 768 ? 'DESKTOP VIEW RESULTS' : 'MOBILE VIEW RESULTS'}
-        </h2>
-      </div>
-
-      {/* Desktop Layout */}
-      <div className="hidden md:grid md:grid-cols-2 gap-6">
-        {/* Visualized Image Result */}
-        {results.visualizedImage && (
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Generated Results</CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="space-y-4">
-            <div className="aspect-square border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100">
-              <img 
-                src={results.visualizedImage} 
-                alt="Visualized Image" 
-                className="w-full h-full object-contain"
-              />
+            <div>
+              <h3 className="font-medium mb-2">Original Prompt:</h3>
+              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+                {results.originalPrompt}
+              </p>
             </div>
-            <div className="text-center text-gray-600 font-medium">
-              VISUALIZED IMAGE<br />
-              (if user selected this option)
-            </div>
-            <Textarea
-              value={editablePrompt}
-              onChange={(e) => setEditablePrompt(e.target.value)}
-              placeholder="Original description/prompt text that you can edit and type..."
-              className="min-h-[80px] resize-none"
-            />
-            <Button 
-              onClick={() => handleEditAndCreateAgain('visualized')}
-              className="w-full"
-              variant="secondary"
-            >
-              Edit & Create Again
-            </Button>
-          </div>
-        )}
-
-        {/* Flat Sketch Result */}
-        {results.flatSketchImage && (
-          <div className="space-y-4">
-            <div className="aspect-square border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-              {results.flatSketchImage ? (
-                <img 
-                  src={results.flatSketchImage} 
-                  alt="Flat Sketch" 
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <div className="text-center text-gray-500">
-                  <div className="text-sm">FLAT SKETCH IMAGE</div>
-                  <div className="text-xs">(if user selected this option)</div>
-                  <Button className="mt-4">Create</Button>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {results.visualizedImage && (
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Visualized Image</h4>
+                  <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group">
+                    <img 
+                      src={results.visualizedImage} 
+                      alt="Visualized" 
+                      className="w-full h-full object-cover"
+                    />
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                      onClick={() => downloadImage(results.visualizedImage!, 'visualized-image.png')}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {results.flatSketchImage && (
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Flat Sketch</h4>
+                  <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group">
+                    <img 
+                      src={results.flatSketchImage} 
+                      alt="Flat Sketch" 
+                      className="w-full h-full object-cover"
+                    />
+                    <Button
+                      size="icon"
+                      variant="secondary"
+                      className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8"
+                      onClick={() => downloadImage(results.flatSketchImage!, 'flat-sketch.png')}
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
-            <div className="text-center text-gray-600 font-medium">
-              FLAT SKETCH IMAGE<br />
-              (if user selected this option)
-            </div>
-            <Textarea
-              value={editablePrompt}
-              onChange={(e) => setEditablePrompt(e.target.value)}
-              placeholder="Original description/prompt text that you can edit and type..."
-              className="min-h-[80px] resize-none"
-            />
-            <Button 
-              onClick={() => handleEditAndCreateAgain('flatSketch')}
-              className="w-full"
-              variant="secondary"
-            >
-              Edit & Create Again
-            </Button>
           </div>
-        )}
-      </div>
-
-      {/* Mobile Layout */}
-      <div className="md:hidden space-y-8">
-        {/* Visualized Image Result */}
-        {results.visualizedImage && (
-          <div className="space-y-4">
-            <div className="aspect-square border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100">
-              <img 
-                src={results.visualizedImage} 
-                alt="Visualized Image" 
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="text-center text-gray-600 font-medium">
-              VISUALIZED IMAGE<br />
-              (if user selected this option)
-            </div>
-            <Textarea
-              value={editablePrompt}
-              onChange={(e) => setEditablePrompt(e.target.value)}
-              placeholder="Original description/prompt text that you can edit and type..."
-              className="min-h-[80px] resize-none"
-            />
-            <Button 
-              onClick={() => handleEditAndCreateAgain('visualized')}
-              className="w-full"
-              variant="secondary"
-            >
-              Edit & Create Again
-            </Button>
-          </div>
-        )}
-
-        {/* Separator for mobile */}
-        {results.visualizedImage && results.flatSketchImage && (
-          <div className="border-t border-gray-300"></div>
-        )}
-
-        {/* Flat Sketch Result */}
-        {results.flatSketchImage && (
-          <div className="space-y-4">
-            <div className="aspect-square border-2 border-gray-300 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-              {results.flatSketchImage ? (
-                <img 
-                  src={results.flatSketchImage} 
-                  alt="Flat Sketch" 
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <div className="text-center text-gray-500">
-                  <div className="text-sm">FLAT SKETCH IMAGE</div>
-                  <div className="text-xs">(if user selected this option)</div>
-                  <Button className="mt-4">Create</Button>
-                </div>
-              )}
-            </div>
-            <div className="text-center text-gray-600 font-medium">
-              FLAT SKETCH IMAGE<br />
-              (if user selected this option)
-            </div>
-            <Textarea
-              value={editablePrompt}
-              onChange={(e) => setEditablePrompt(e.target.value)}
-              placeholder="Original description/prompt text that you can edit and type..."
-              className="min-h-[80px] resize-none"
-            />
-            <Button 
-              onClick={() => handleEditAndCreateAgain('flatSketch')}
-              className="w-full"
-              variant="secondary"
-            >
-              Edit & Create Again
-            </Button>
-          </div>
-        )}
-      </div>
-
-      {/* Start Over Button */}
-      <div className="flex justify-center pt-6 border-t">
-        <Button onClick={onStartOver} variant="outline">
-          Start Over
-        </Button>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

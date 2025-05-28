@@ -1,5 +1,4 @@
-
-import { Trash2, Calendar } from 'lucide-react';
+import { Trash2, Calendar, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGeneratedSketches, GeneratedSketch } from '@/hooks/useGeneratedSketches';
@@ -20,6 +19,16 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
     } catch (error) {
       toast.error('Failed to delete sketch');
     }
+  };
+
+  const downloadImage = (imageUrl: string, filename: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (isLoading) {
@@ -58,24 +67,40 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
                 {sketch.visualized_image && (
                   <div className="space-y-1">
                     <div className="text-xs text-gray-600">Visualized</div>
-                    <div className="aspect-square bg-gray-100 rounded-md overflow-hidden">
+                    <div className="relative aspect-square bg-gray-100 rounded-md overflow-hidden group">
                       <img 
                         src={sketch.visualized_image} 
                         alt="Visualized" 
                         className="w-full h-full object-cover"
                       />
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6"
+                        onClick={(e) => downloadImage(sketch.visualized_image!, 'visualized-image.png', e)}
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 )}
                 {sketch.flat_sketch_image && (
                   <div className="space-y-1">
                     <div className="text-xs text-gray-600">Flat Sketch</div>
-                    <div className="aspect-square bg-gray-100 rounded-md overflow-hidden">
+                    <div className="relative aspect-square bg-gray-100 rounded-md overflow-hidden group">
                       <img 
                         src={sketch.flat_sketch_image} 
                         alt="Flat Sketch" 
                         className="w-full h-full object-cover"
                       />
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        className="absolute bottom-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6"
+                        onClick={(e) => downloadImage(sketch.flat_sketch_image!, 'flat-sketch.png', e)}
+                      >
+                        <Download className="h-3 w-3" />
+                      </Button>
                     </div>
                   </div>
                 )}

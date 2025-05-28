@@ -296,28 +296,41 @@ export const SketchUploadForm = ({
           {/* Generation Options and Button - Mobile responsive */}
           <div className="flex flex-col gap-4">
             <div className="grid grid-cols-2 gap-3">
-              <Toggle
-                pressed={options.visualized}
-                onPressedChange={() => toggleOption('visualized')}
+              <button
+                type="button"
+                onClick={() => toggleOption('visualized')}
                 disabled={isGenerating}
-                className="h-12 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                className={`h-12 px-4 text-sm border-2 rounded-md transition-all flex items-center justify-center gap-2 ${
+                  options.visualized 
+                    ? 'border-primary bg-primary text-primary-foreground' 
+                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                }`}
               >
-                <div className="flex items-center gap-2">
-                  {options.visualized && <Check className="h-4 w-4" />}
-                  <span>Visualized Image</span>
+                <div className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center ${
+                  options.visualized ? 'border-white bg-white' : 'border-gray-400'
+                }`}>
+                  {options.visualized && <Check className="h-3 w-3 text-primary" />}
                 </div>
-              </Toggle>
-              <Toggle
-                pressed={options.flatSketch}
-                onPressedChange={() => toggleOption('flatSketch')}
+                <span>Visualized Image</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => toggleOption('flatSketch')}
                 disabled={isGenerating}
-                className="h-12 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+                className={`h-12 px-4 text-sm border-2 rounded-md transition-all flex items-center justify-center gap-2 ${
+                  options.flatSketch 
+                    ? 'border-primary bg-primary text-primary-foreground' 
+                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                }`}
               >
-                <div className="flex items-center gap-2">
-                  {options.flatSketch && <Check className="h-4 w-4" />}
-                  <span>Flat sketch</span>
+                <div className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center ${
+                  options.flatSketch ? 'border-white bg-white' : 'border-gray-400'
+                }`}>
+                  {options.flatSketch && <Check className="h-3 w-3 text-primary" />}
                 </div>
-              </Toggle>
+                <span>Flat sketch</span>
+              </button>
             </div>
             
             <Button
