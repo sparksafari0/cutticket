@@ -1,15 +1,18 @@
 import { useState, useRef } from 'react';
-import { Upload, Camera, Image, X } from 'lucide-react';
+import { Upload, Camera, Image, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { Toggle } from '@/components/ui/toggle';
 import { supabase } from '@/integrations/supabase/client';
 import { GenerationRequest, GenerationOptions } from '@/pages/GenerateSketch';
+
 interface SketchUploadFormProps {
   onGenerate: (request: GenerationRequest) => void;
   isGenerating: boolean;
 }
+
 export const SketchUploadForm = ({
   onGenerate,
   isGenerating
@@ -24,29 +27,35 @@ export const SketchUploadForm = ({
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
   const handleImageUpload = async (file: File) => {
     if (!file) return;
+
     try {
       setUploading(true);
+      
       if (uploadedImages.length >= 6) {
         console.error('Maximum 6 images allowed');
         return;
       }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `sketch-uploads/${fileName}`;
-      const {
-        error: uploadError
-      } = await supabase.storage.from('project-images').upload(filePath, file);
+
+      const { error: uploadError } = await supabase.storage
+        .from('project-images')
+        .upload(filePath, file);
+
       if (uploadError) {
         console.error('Error uploading image:', uploadError);
         return;
       }
-      const {
-        data: {
-          publicUrl
-        }
-      } = supabase.storage.from('project-images').getPublicUrl(filePath);
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('project-images')
+        .getPublicUrl(filePath);
+
       setUploadedImages(prev => [...prev, publicUrl]);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -54,35 +63,44 @@ export const SketchUploadForm = ({
       setUploading(false);
     }
   };
+
   const handleMultipleImageUpload = async (files: File[]) => {
     const maxImagesToUpload = Math.min(files.length, 6 - uploadedImages.length);
+    
     if (maxImagesToUpload <= 0) {
       console.error('Maximum 6 images allowed');
       return;
     }
+
     setUploading(true);
+    
     try {
-      const uploadPromises = files.slice(0, maxImagesToUpload).map(async file => {
+      const uploadPromises = files.slice(0, maxImagesToUpload).map(async (file) => {
         if (!file.type.startsWith('image/')) return null;
+        
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
         const filePath = `sketch-uploads/${fileName}`;
-        const {
-          error: uploadError
-        } = await supabase.storage.from('project-images').upload(filePath, file);
+
+        const { error: uploadError } = await supabase.storage
+          .from('project-images')
+          .upload(filePath, file);
+
         if (uploadError) {
           console.error('Error uploading image:', uploadError);
           return null;
         }
-        const {
-          data: {
-            publicUrl
-          }
-        } = supabase.storage.from('project-images').getPublicUrl(filePath);
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('project-images')
+          .getPublicUrl(filePath);
+
         return publicUrl;
       });
+
       const uploadedUrls = await Promise.all(uploadPromises);
       const successfulUploads = uploadedUrls.filter(url => url !== null);
+      
       if (successfulUploads.length > 0) {
         setUploadedImages(prev => [...prev, ...successfulUploads]);
       }
@@ -92,6 +110,7 @@ export const SketchUploadForm = ({
       setUploading(false);
     }
   };
+
   const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
@@ -102,29 +121,36 @@ export const SketchUploadForm = ({
       }
     }
   };
+
   const handleRemoveImage = (index: number) => {
     setUploadedImages(prev => prev.filter((_, i) => i !== index));
   };
+
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(true);
   };
+
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
   };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
   };
+
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
+
     const files = Array.from(e.dataTransfer.files);
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
+
     if (imageFiles.length > 0) {
       if (imageFiles.length === 1) {
         await handleImageUpload(imageFiles[0]);
@@ -133,19 +159,24 @@ export const SketchUploadForm = ({
       }
     }
   };
+
   const triggerFileUpload = () => {
     fileInputRef.current?.click();
   };
+
   const triggerCameraCapture = () => {
     cameraInputRef.current?.click();
   };
+
   const toggleOption = (option: keyof GenerationOptions) => {
     setOptions(prev => ({
       ...prev,
       [option]: !prev[option]
     }));
   };
+
   const canGenerate = uploadedImages.length > 0 && prompt.trim() && (options.visualized || options.flatSketch);
+
   const handleSubmit = () => {
     if (canGenerate) {
       onGenerate({
@@ -155,6 +186,7 @@ export const SketchUploadForm = ({
       });
     }
   };
+
   return (
     <div className="max-w-3xl mx-auto">
       <Card className="border-2">
@@ -220,18 +252,20 @@ export const SketchUploadForm = ({
               )}
               
               {/* Upload type badges - responsive grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 justify-center mt-4 max-w-md mx-auto">
-                <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
-                  <span>✏️</span>
-                  <span className="text-center">Hand/Flat sketches</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
-                  <span>👕</span>
-                  <span className="text-center">Reference images</span>
-                </div>
-                <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
-                  <span>🧵</span>
-                  <span className="text-center">Fabric swatches</span>
+              <div className="grid grid-cols-1 gap-2 justify-center mt-4 max-w-md mx-auto">
+                <div className="flex flex-wrap justify-center gap-2">
+                  <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
+                    <span>✏️</span>
+                    <span className="text-center">Hand/Flat sketches</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
+                    <span>👕</span>
+                    <span className="text-center">Reference images</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
+                    <span>🧵</span>
+                    <span className="text-center">Fabric swatches</span>
+                  </div>
                 </div>
               </div>
               
@@ -260,32 +294,36 @@ export const SketchUploadForm = ({
           </div>
 
           {/* Generation Options and Button - Mobile responsive */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 flex-1">
-              <Button
-                type="button"
-                variant={options.visualized ? "default" : "outline"}
-                onClick={() => toggleOption('visualized')}
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-3">
+              <Toggle
+                pressed={options.visualized}
+                onPressedChange={() => toggleOption('visualized')}
                 disabled={isGenerating}
-                className="flex-1 h-10 sm:h-12 text-sm"
+                className="h-12 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
               >
-                Visualized Image
-              </Button>
-              <Button
-                type="button"
-                variant={options.flatSketch ? "default" : "outline"}
-                onClick={() => toggleOption('flatSketch')}
+                <div className="flex items-center gap-2">
+                  {options.visualized && <Check className="h-4 w-4" />}
+                  <span>Visualized Image</span>
+                </div>
+              </Toggle>
+              <Toggle
+                pressed={options.flatSketch}
+                onPressedChange={() => toggleOption('flatSketch')}
                 disabled={isGenerating}
-                className="flex-1 h-10 sm:h-12 text-sm"
+                className="h-12 text-sm data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
               >
-                Flat sketch
-              </Button>
+                <div className="flex items-center gap-2">
+                  {options.flatSketch && <Check className="h-4 w-4" />}
+                  <span>Flat sketch</span>
+                </div>
+              </Toggle>
             </div>
             
             <Button
               onClick={handleSubmit}
               disabled={!canGenerate || isGenerating}
-              className="h-10 sm:h-12 px-6 sm:px-8 text-sm"
+              className="h-12 px-6 sm:px-8 text-sm w-full"
               size="lg"
             >
               {isGenerating ? (
