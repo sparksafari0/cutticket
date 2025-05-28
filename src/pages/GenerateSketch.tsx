@@ -82,18 +82,18 @@ const GenerateSketch = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
             <Link to="/">
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold">Sketch Generator</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">Sketch Generator</h1>
           </div>
           
           {!showForm && !results && (
-            <Button onClick={handleNewSketch}>
+            <Button onClick={handleNewSketch} className="w-full sm:w-auto text-sm">
               <Plus className="h-4 w-4 mr-2" />
               Generate New Sketch
             </Button>
@@ -104,13 +104,13 @@ const GenerateSketch = () => {
         <div className="space-y-8">
           {results ? (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Generated Results</h2>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={handleNewSketch}>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <h2 className="text-lg sm:text-xl font-semibold">Generated Results</h2>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Button variant="outline" onClick={handleNewSketch} className="text-sm">
                     Generate New
                   </Button>
-                  <Button variant="outline" onClick={handleStartOver}>
+                  <Button variant="outline" onClick={handleStartOver} className="text-sm">
                     Back to Gallery
                   </Button>
                 </div>
@@ -123,9 +123,9 @@ const GenerateSketch = () => {
             </div>
           ) : showForm ? (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold">Generate New Sketch</h2>
-                <Button variant="outline" onClick={handleStartOver}>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <h2 className="text-lg sm:text-xl font-semibold">Generate New Sketch</h2>
+                <Button variant="outline" onClick={handleStartOver} className="text-sm">
                   Back to Gallery
                 </Button>
               </div>
@@ -136,8 +136,8 @@ const GenerateSketch = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <Button onClick={handleNewSketch} size="lg">
+              <div className="flex justify-center sm:justify-start">
+                <Button onClick={handleNewSketch} size="lg" className="w-full sm:w-auto">
                   <Plus className="h-5 w-5 mr-2" />
                   Generate New Sketch
                 </Button>

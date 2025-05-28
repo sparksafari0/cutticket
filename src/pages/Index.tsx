@@ -43,15 +43,15 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Project Manager</h1>
-          <div className="flex gap-2">
-            <Link to="/generate-sketch">
-              <Button variant="outline">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold">Project Manager</h1>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Link to="/generate-sketch" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto text-sm">
                 Generate Sketch
               </Button>
             </Link>
-            <Button onClick={() => setIsFormOpen(true)}>
+            <Button onClick={() => setIsFormOpen(true)} className="w-full sm:w-auto text-sm">
               Add New Project
             </Button>
           </div>
