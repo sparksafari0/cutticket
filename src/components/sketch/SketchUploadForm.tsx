@@ -1,10 +1,9 @@
-
 import { useState, useRef } from 'react';
-import { Upload, Camera, Image } from 'lucide-react';
+import { Upload, Camera, Image, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { GenerationRequest, GenerationOptions } from '@/pages/GenerateSketch';
 
@@ -32,18 +31,15 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
     try {
       setUploading(true);
 
-      // Check if we've reached the limit of 6 photos
       if (uploadedImages.length >= 6) {
         console.error('Maximum 6 images allowed');
         return;
       }
 
-      // Create a unique file path
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `sketch-uploads/${fileName}`;
 
-      // Upload the file to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('project-images')
         .upload(filePath, file);
@@ -53,12 +49,10 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
         return;
       }
 
-      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('project-images')
         .getPublicUrl(filePath);
 
-      // Update the uploaded images
       setUploadedImages(prev => [...prev, publicUrl]);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -191,165 +185,201 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Upload Images Section */}
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4 text-center">Upload images</h2>
-        
-        {/* Upload Area */}
-        <div 
-          className={`w-full h-40 bg-gray-100 border-2 border-dashed rounded-md flex items-center justify-center mb-4 transition-colors ${
-            isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
-          }`}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          {uploadedImages.length > 0 ? (
-            <div className="grid grid-cols-3 gap-2 w-full p-4 overflow-y-auto max-h-32">
-              {uploadedImages.map((image, index) => (
-                <div key={index} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden">
-                  <img src={image} alt={`Upload ${index + 1}`} className="w-full h-full object-cover" />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="destructive"
-                    className="absolute top-1 right-1 h-6 w-6"
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    ×
-                  </Button>
+    <div className="max-w-4xl mx-auto">
+      <Card className="p-6">
+        <CardContent className="space-y-6 p-0">
+          {/* Upload Area */}
+          <div className="space-y-4">
+            <div className="text-center">
+              <h2 className="text-lg font-semibold mb-2">Create Your Design</h2>
+              <p className="text-sm text-muted-foreground">Upload reference images and describe your vision</p>
+            </div>
+            
+            {/* Drag & Drop Area */}
+            <div 
+              className={`relative min-h-[200px] border-2 border-dashed rounded-lg p-6 transition-all cursor-pointer ${
+                isDragOver 
+                  ? 'border-primary bg-primary/5' 
+                  : 'border-muted-foreground/25 hover:border-primary/50'
+              }`}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onClick={triggerFileUpload}
+            >
+              {uploadedImages.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {uploadedImages.map((image, index) => (
+                    <div key={index} className="relative aspect-square bg-muted rounded-lg overflow-hidden group">
+                      <img src={image} alt={`Reference ${index + 1}`} className="w-full h-full object-cover" />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        className="absolute top-2 right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveImage(index);
+                        }}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  
+                  {/* Add More Button */}
+                  {uploadedImages.length < 6 && (
+                    <div className="aspect-square border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center hover:border-primary/50 transition-colors">
+                      <div className="text-center">
+                        <Plus className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
+                        <span className="text-sm text-muted-foreground">Add More</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ))}
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center py-8">
+                  <div className="mb-4">
+                    <Image className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
+                    <h3 className="font-medium mb-2">
+                      {isDragOver ? 'Drop your images here' : 'Upload reference images'}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Drag & drop images or click to browse
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button type="button" variant="outline" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      triggerFileUpload();
+                    }}>
+                      <Upload className="h-4 w-4 mr-2" />
+                      Browse Files
+                    </Button>
+                    <Button type="button" variant="outline" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      triggerCameraCapture();
+                    }}>
+                      <Camera className="h-4 w-4 mr-2" />
+                      Take Photo
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {uploading && (
+                <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                    <p className="text-sm">Uploading...</p>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center text-gray-500">
-              <Image className="h-10 w-10 mb-2" />
-              <span className="text-center">
-                {isDragOver ? 'Drop images here' : 'Drag & drop images here'}
-              </span>
+            
+            {/* Image Type Badges */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              <Badge variant="outline" className="text-xs">✏️ Hand sketches</Badge>
+              <Badge variant="outline" className="text-xs">👕 Reference images</Badge>
+              <Badge variant="outline" className="text-xs">📋 Fabric swatches</Badge>
             </div>
-          )}
-        </div>
+            
+            {/* Upload Status */}
+            <div className="text-xs text-center text-muted-foreground">
+              {uploadedImages.length > 0 
+                ? `${uploadedImages.length}/6 images uploaded`
+                : 'Upload up to 6 images'
+              }
+            </div>
+          </div>
 
-        {/* Category badges */}
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          <Badge variant="outline">✏️ Hand/Flat sketches</Badge>
-          <Badge variant="outline">👕 Reference images</Badge>
-          <Badge variant="outline">📋 Fabric swatches</Badge>
-        </div>
+          {/* Prompt Section */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Describe your design</label>
+              <Textarea
+                placeholder="What design of clothes do you want to make...?"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="min-h-[100px] resize-none"
+              />
+            </div>
 
-        {/* Upload Button */}
-        <div className="flex justify-center">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" disabled={uploading || uploadedImages.length >= 6}>
-                {uploading ? 'Uploading...' : 'Upload images'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2 bg-background">
-              <div className="flex flex-col gap-2">
+            {/* Generation Options */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium">Generation options</label>
+              <div className="flex gap-3">
                 <Button
                   type="button"
-                  variant="ghost"
-                  onClick={triggerFileUpload}
-                  disabled={uploading}
-                  className="flex items-center gap-2"
+                  variant={options.visualized ? "default" : "outline"}
+                  onClick={() => toggleOption('visualized')}
+                  disabled={isGenerating}
+                  className="flex-1"
                 >
-                  <Upload size={16} />
-                  Upload Images
+                  Visualized Image
                 </Button>
                 <Button
                   type="button"
-                  variant="ghost"
-                  onClick={triggerCameraCapture}
-                  disabled={uploading}
-                  className="flex items-center gap-2"
+                  variant={options.flatSketch ? "default" : "outline"}
+                  onClick={() => toggleOption('flatSketch')}
+                  disabled={isGenerating}
+                  className="flex-1"
                 >
-                  <Camera size={16} />
-                  Take Photo
+                  Flat Sketch
                 </Button>
               </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+            </div>
 
-        <div className="text-xs text-muted-foreground text-center mt-2">
-          {uploading ? 'Uploading...' : `Allow uploading up to 6 photos. At least 1 photo required. (${6 - uploadedImages.length} remaining)`}
-        </div>
+            {/* Generate Button */}
+            <Button
+              onClick={handleSubmit}
+              disabled={!canGenerate || isGenerating}
+              className="w-full h-12 text-base"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Generating...
+                </>
+              ) : (
+                'Generate Design'
+              )}
+            </Button>
 
-        {/* Hidden file inputs */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={handleFileInputChange}
-          disabled={uploading}
-        />
-        <input
-          type="file"
-          ref={cameraInputRef}
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleFileInputChange}
-          disabled={uploading}
-        />
-      </div>
-
-      {/* Prompt Section */}
-      <div className="space-y-4">
-        <div className="text-center text-gray-600 italic">
-          What design of clothes you want to make...?
-        </div>
-        
-        <Textarea
-          placeholder="Describe your design..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[120px] resize-none"
-        />
-
-        {/* Generation Options */}
-        <div className="flex gap-4 justify-center">
-          <Button
-            variant={options.visualized ? "default" : "outline"}
-            onClick={() => toggleOption('visualized')}
-            disabled={isGenerating}
-          >
-            Visualized Image
-          </Button>
-          <Button
-            variant={options.flatSketch ? "default" : "outline"}
-            onClick={() => toggleOption('flatSketch')}
-            disabled={isGenerating}
-          >
-            Flat sketch
-          </Button>
-        </div>
-
-        {/* Generate Button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={handleSubmit}
-            disabled={!canGenerate || isGenerating}
-            className="px-8"
-          >
-            {isGenerating ? 'Generating...' : 'Generate'}
-          </Button>
-        </div>
-
-        {!canGenerate && (
-          <div className="text-sm text-red-500 text-center">
-            {!uploadedImages.length && "Please upload at least 1 image. "}
-            {!prompt.trim() && "Prompt required. "}
-            {!options.visualized && !options.flatSketch && "Please select at least one generation option."}
+            {/* Validation Messages */}
+            {!canGenerate && (
+              <div className="text-sm text-destructive text-center space-y-1">
+                {!uploadedImages.length && <div>• Please upload at least 1 image</div>}
+                {!prompt.trim() && <div>• Please describe your design</div>}
+                {!options.visualized && !options.flatSketch && <div>• Please select at least one generation option</div>}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+
+          {/* Hidden file inputs */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleFileInputChange}
+            disabled={uploading}
+          />
+          <input
+            type="file"
+            ref={cameraInputRef}
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleFileInputChange}
+            disabled={uploading}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };
