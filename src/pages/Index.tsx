@@ -1,21 +1,43 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ProjectForm } from '@/components/form/ProjectForm';
+import { ProjectForm } from '@/components/ProjectForm';
 import { ProjectList } from '@/components/ProjectList';
 import { useProjects } from '@/hooks/useProjects';
 
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const { projects, isLoading, isError } = useProjects();
+  const [editingProject, setEditingProject] = useState(null);
+  const { projects, isLoading, addProject, updateProject, deleteProject } = useProjects();
 
   if (isLoading) {
     return <div>Loading projects...</div>;
   }
 
-  if (isError) {
-    return <div>Error fetching projects.</div>;
-  }
+  const handleEdit = (project) => {
+    setEditingProject(project);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    deleteProject.mutate(id);
+  };
+
+  const handleFormSubmit = (data) => {
+    if (editingProject) {
+      updateProject.mutate({ ...editingProject, ...data });
+    } else {
+      addProject.mutate(data);
+    }
+    setIsFormOpen(false);
+    setEditingProject(null);
+  };
+
+  const handleFormClose = () => {
+    setIsFormOpen(false);
+    setEditingProject(null);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -36,10 +58,20 @@ const Index = () => {
         </div>
 
         {/* Project List */}
-        <ProjectList projects={projects} />
+        <ProjectList 
+          projects={projects} 
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
 
         {/* Project Form Modal */}
-        <ProjectForm open={isFormOpen} setOpen={setIsFormOpen} />
+        <ProjectForm 
+          open={isFormOpen} 
+          onOpenChange={handleFormClose}
+          onSubmit={handleFormSubmit}
+          initialData={editingProject}
+          onDelete={editingProject ? () => handleDelete(editingProject.id) : undefined}
+        />
       </div>
     </div>
   );
