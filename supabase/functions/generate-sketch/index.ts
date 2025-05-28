@@ -41,7 +41,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-image-1',
+          model: 'dall-e-3',
           prompt: visualizedPrompt,
           n: 1,
           size: '1024x1024',
@@ -50,6 +50,8 @@ serve(async (req) => {
       });
 
       if (!visualizedResponse.ok) {
+        const errorData = await visualizedResponse.json();
+        console.error('OpenAI API error for visualized image:', errorData);
         throw new Error(`OpenAI API error for visualized image: ${visualizedResponse.statusText}`);
       }
 
@@ -68,7 +70,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-image-1',
+          model: 'dall-e-3',
           prompt: sketchPrompt,
           n: 1,
           size: '1024x1024',
@@ -77,6 +79,8 @@ serve(async (req) => {
       });
 
       if (!sketchResponse.ok) {
+        const errorData = await sketchResponse.json();
+        console.error('OpenAI API error for flat sketch:', errorData);
         throw new Error(`OpenAI API error for flat sketch: ${sketchResponse.statusText}`);
       }
 
