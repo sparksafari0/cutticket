@@ -1,12 +1,14 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SketchUploadForm } from '@/components/sketch/SketchUploadForm';
 import { SketchResults } from '@/components/sketch/SketchResults';
+import { SketchGallery } from '@/components/sketch/SketchGallery';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { GeneratedSketch } from '@/hooks/useGeneratedSketches';
 
 export interface GenerationOptions {
   visualized: boolean;
@@ -20,6 +22,7 @@ export interface GenerationRequest {
 }
 
 export interface GenerationResult {
+  id?: string;
   visualizedImage?: string;
   flatSketchImage?: string;
   originalPrompt: string;
@@ -28,6 +31,7 @@ export interface GenerationResult {
 const GenerateSketch = () => {
   const [results, setResults] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const handleGenerate = async (request: GenerationRequest) => {
     setIsGenerating(true);
@@ -44,6 +48,7 @@ const GenerateSketch = () => {
       }
 
       setResults(data);
+      setShowForm(false);
       toast.success('Images generated successfully!');
     } catch (error) {
       console.error('Error generating images:', error);
@@ -55,34 +60,92 @@ const GenerateSketch = () => {
 
   const handleStartOver = () => {
     setResults(null);
+    setShowForm(false);
+  };
+
+  const handleNewSketch = () => {
+    setResults(null);
+    setShowForm(true);
+  };
+
+  const handleSketchClick = (sketch: GeneratedSketch) => {
+    setResults({
+      id: sketch.id,
+      originalPrompt: sketch.original_prompt,
+      visualizedImage: sketch.visualized_image || undefined,
+      flatSketchImage: sketch.flat_sketch_image || undefined,
+    });
+    setShowForm(false);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Link to="/">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-4 w-4" />
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Link to="/">
+              <Button variant="ghost" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <h1 className="text-2xl font-bold">Sketch Generator</h1>
+          </div>
+          
+          {!showForm && !results && (
+            <Button onClick={handleNewSketch}>
+              <Plus className="h-4 w-4 mr-2" />
+              Generate New Sketch
             </Button>
-          </Link>
-          <h1 className="text-2xl font-bold">Generate Sketch</h1>
+          )}
         </div>
 
         {/* Main Content */}
-        {results ? (
-          <SketchResults 
-            results={results} 
-            onStartOver={handleStartOver}
-            isGenerating={isGenerating}
-          />
-        ) : (
-          <SketchUploadForm 
-            onGenerate={handleGenerate} 
-            isGenerating={isGenerating}
-          />
-        )}
+        <div className="space-y-8">
+          {results ? (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Generated Results</h2>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={handleNewSketch}>
+                    Generate New
+                  </Button>
+                  <Button variant="outline" onClick={handleStartOver}>
+                    Back to Gallery
+                  </Button>
+                </div>
+              </div>
+              <SketchResults 
+                results={results} 
+                onStartOver={handleStartOver}
+                isGenerating={isGenerating}
+              />
+            </div>
+          ) : showForm ? (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Generate New Sketch</h2>
+                <Button variant="outline" onClick={handleStartOver}>
+                  Back to Gallery
+                </Button>
+              </div>
+              <SketchUploadForm 
+                onGenerate={handleGenerate} 
+                isGenerating={isGenerating}
+              />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <Button onClick={handleNewSketch} size="lg">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Generate New Sketch
+                </Button>
+              </div>
+              <SketchGallery onSketchClick={handleSketchClick} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
