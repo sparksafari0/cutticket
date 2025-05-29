@@ -40,7 +40,7 @@ export const SketchResults = ({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl">✅ Generated Results</CardTitle>
-            {results.id && onDelete && <Button variant="destructive" size="icon" onClick={onDelete} className="text-red-500 bg-slate-300 hover:bg-slate-200">
+            {results.id && onDelete && <Button variant="destructive" size="icon" onClick={onDelete} className="text-red-500 bg-red-100">
                 <Trash2 className="h-4 w-4" />
               </Button>}
           </div>
