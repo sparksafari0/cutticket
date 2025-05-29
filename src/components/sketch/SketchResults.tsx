@@ -30,7 +30,7 @@ export const SketchResults = ({
   return <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">🌟 Generated Results</CardTitle>
+          <CardTitle className="text-xl">✅ Generated Results</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
