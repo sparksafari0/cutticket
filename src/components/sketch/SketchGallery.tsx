@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Trash2, Calendar, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGeneratedSketches, GeneratedSketch } from '@/hooks/useGeneratedSketches';
 import { toast } from 'sonner';
 import { ImageModal } from './ImageModal';
+import DeleteConfirmationDialog from '@/components/project/DeleteConfirmationDialog';
 
 interface SketchGalleryProps {
   onSketchClick?: (sketch: GeneratedSketch) => void;
@@ -13,14 +15,26 @@ interface SketchGalleryProps {
 export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
   const { sketches, isLoading, deleteSketch } = useGeneratedSketches();
   const [modalImage, setModalImage] = useState<{ url: string; title: string } | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [sketchToDelete, setSketchToDelete] = useState<string | null>(null);
 
-  const handleDelete = async (id: string, e: React.MouseEvent) => {
+  const handleDeleteClick = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    setSketchToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!sketchToDelete) return;
+    
     try {
-      await deleteSketch.mutateAsync(id);
+      await deleteSketch.mutateAsync(sketchToDelete);
       toast.success('Sketch deleted successfully');
     } catch (error) {
       toast.error('Failed to delete sketch');
+    } finally {
+      setDeleteDialogOpen(false);
+      setSketchToDelete(null);
     }
   };
 
@@ -37,6 +51,11 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
   const handleImageClick = (imageUrl: string, title: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setModalImage({ url: imageUrl, title });
+  };
+
+  const getSketchTitle = (sketch: GeneratedSketch) => {
+    const sketchToDeleteData = sketches.find(s => s.id === sketchToDelete);
+    return sketchToDeleteData?.original_prompt || 'this sketch';
   };
 
   if (isLoading) {
@@ -60,10 +79,19 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
         {sketches.map((sketch) => (
           <Card 
             key={sketch.id} 
-            className="cursor-pointer hover:shadow-lg transition-shadow"
+            className="cursor-pointer hover:shadow-lg transition-shadow relative"
             onClick={() => onSketchClick?.(sketch)}
           >
-            <CardHeader className="pb-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => handleDeleteClick(sketch.id, e)}
+              className="absolute top-2 right-2 z-10 text-red-500 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+            
+            <CardHeader className="pb-3 pr-12">
               <CardTitle className="text-sm line-clamp-2">{sketch.original_prompt}</CardTitle>
               <div className="flex items-center text-xs text-gray-500 gap-1">
                 <Calendar className="h-3 w-3" />
@@ -115,17 +143,6 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
                   </div>
                 )}
               </div>
-              
-              <div className="flex justify-end">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => handleDelete(sketch.id, e)}
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
             </CardContent>
           </Card>
         ))}
@@ -139,6 +156,13 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
           title={modalImage.title}
         />
       )}
+
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title={getSketchTitle(sketches.find(s => s.id === sketchToDelete) || sketches[0])}
+      />
     </div>
   );
 };
