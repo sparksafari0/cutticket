@@ -49,7 +49,7 @@ serve(async (req) => {
       formData.append('model', 'gpt-image-1');
       formData.append('prompt', visualizedPrompt);
       formData.append('n', '1');
-      formData.append('size', '1024x1024');
+      formData.append('size', '1024x1536');
       formData.append('quality', 'high');
       
       // Add images to form data
@@ -106,7 +106,7 @@ serve(async (req) => {
       formData.append('model', 'gpt-image-1');
       formData.append('prompt', sketchPrompt);
       formData.append('n', '1');
-      formData.append('size', '1024x1024');
+      formData.append('size', '1024x1536');
       formData.append('quality', 'high');
       
       // Add images to form data
