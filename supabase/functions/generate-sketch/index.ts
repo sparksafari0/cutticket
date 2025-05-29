@@ -41,25 +41,20 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-image-1',
+          model: 'dall-e-3',
           prompt: visualizedPrompt,
           n: 1,
           size: '1024x1024',
-          quality: 'high',
-          output_format: 'png',
+          quality: 'standard',
         }),
       });
 
       if (!visualizedResponse.ok) {
-        const errorData = await visualizedResponse.json();
-        console.error('OpenAI API error for visualized image:', errorData);
         throw new Error(`OpenAI API error for visualized image: ${visualizedResponse.statusText}`);
       }
 
       const visualizedData = await visualizedResponse.json();
-      // gpt-image-1 returns base64 data, so we need to convert it to a data URL
-      const base64Image = visualizedData.data[0].b64_json;
-      results.visualizedImage = `data:image/png;base64,${base64Image}`;
+      results.visualizedImage = visualizedData.data[0].url;
     }
 
     // Generate flat sketch if requested
@@ -73,25 +68,20 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-image-1',
+          model: 'dall-e-3',
           prompt: sketchPrompt,
           n: 1,
           size: '1024x1024',
-          quality: 'high',
-          output_format: 'png',
+          quality: 'standard',
         }),
       });
 
       if (!sketchResponse.ok) {
-        const errorData = await sketchResponse.json();
-        console.error('OpenAI API error for flat sketch:', errorData);
         throw new Error(`OpenAI API error for flat sketch: ${sketchResponse.statusText}`);
       }
 
       const sketchData = await sketchResponse.json();
-      // gpt-image-1 returns base64 data, so we need to convert it to a data URL
-      const base64Image = sketchData.data[0].b64_json;
-      results.flatSketchImage = `data:image/png;base64,${base64Image}`;
+      results.flatSketchImage = sketchData.data[0].url;
     }
 
     return new Response(JSON.stringify(results), {
