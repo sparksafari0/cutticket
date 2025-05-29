@@ -8,18 +8,19 @@ import { SketchResults } from '@/components/sketch/SketchResults';
 import { SketchGallery } from '@/components/sketch/SketchGallery';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { GeneratedSketch, useGeneratedSketches } from '@/hooks/useGeneratedSketches';
-import DeleteConfirmationDialog from '@/components/project/DeleteConfirmationDialog';
+import { GeneratedSketch } from '@/hooks/useGeneratedSketches';
 
 export interface GenerationOptions {
   visualized: boolean;
   flatSketch: boolean;
 }
+
 export interface GenerationRequest {
   images: string[];
   prompt: string;
   options: GenerationOptions;
 }
+
 export interface GenerationResult {
   id?: string;
   visualizedImage?: string;
@@ -31,24 +32,21 @@ const GenerateSketch = () => {
   const [results, setResults] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const { deleteSketch } = useGeneratedSketches();
 
   const handleGenerate = async (request: GenerationRequest) => {
     setIsGenerating(true);
     try {
       // Call the Supabase Edge Function
-      const {
-        data,
-        error
-      } = await supabase.functions.invoke('generate-sketch', {
-        body: request
+      const { data, error } = await supabase.functions.invoke('generate-sketch', {
+        body: request,
       });
+
       if (error) {
         console.error('Error generating images:', error);
         toast.error('Failed to generate images. Please try again.');
         return;
       }
+
       setResults(data);
       setShowForm(false);
       toast.success('Images generated successfully!');
@@ -75,90 +73,82 @@ const GenerateSketch = () => {
       id: sketch.id,
       originalPrompt: sketch.original_prompt,
       visualizedImage: sketch.visualized_image || undefined,
-      flatSketchImage: sketch.flat_sketch_image || undefined
+      flatSketchImage: sketch.flat_sketch_image || undefined,
     });
     setShowForm(false);
   };
 
-  const handleDeleteClick = () => {
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!results?.id) return;
-    
-    try {
-      await deleteSketch.mutateAsync(results.id);
-      toast.success('Sketch deleted successfully');
-      handleStartOver();
-    } catch (error) {
-      toast.error('Failed to delete sketch');
-    } finally {
-      setDeleteDialogOpen(false);
-    }
-  };
-
-  return <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Link to="/">
               <Button variant="ghost" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="text-xl sm:text-2xl font-bold">Sketch Generator</h1>
+            <h1 className="text-2xl font-bold">Sketch Generator</h1>
           </div>
           
-          {!showForm && !results && <Button onClick={handleNewSketch} className="w-full sm:w-auto text-sm">
+          {!showForm && !results && (
+            <Button onClick={handleNewSketch}>
               <Plus className="h-4 w-4 mr-2" />
               Generate New Sketch
-            </Button>}
+            </Button>
+          )}
         </div>
 
         {/* Main Content */}
         <div className="space-y-8">
-          {results ? <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button variant="outline" onClick={handleStartOver} className="text-sm">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Back to Gallery
-                  </Button>
-                  <Button variant="outline" onClick={handleNewSketch} className="text-sm bg-slate-900 hover:bg-slate-800 text-slate-50">
+          {results ? (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Generated Results</h2>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={handleNewSketch}>
                     Generate New
+                  </Button>
+                  <Button variant="outline" onClick={handleStartOver}>
+                    Back to Gallery
                   </Button>
                 </div>
               </div>
               <SketchResults 
                 results={results} 
-                onStartOver={handleStartOver} 
+                onStartOver={handleStartOver}
                 isGenerating={isGenerating}
-                onDelete={results.id ? handleDeleteClick : undefined}
               />
-            </div> : showForm ? <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <h2 className="text-lg sm:text-xl font-semibold">Generate New Sketch</h2>
-                <Button variant="outline" onClick={handleStartOver} className="text-sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
+            </div>
+          ) : showForm ? (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold">Generate New Sketch</h2>
+                <Button variant="outline" onClick={handleStartOver}>
                   Back to Gallery
                 </Button>
               </div>
-              <SketchUploadForm onGenerate={handleGenerate} isGenerating={isGenerating} />
-            </div> : <div className="space-y-6">
+              <SketchUploadForm 
+                onGenerate={handleGenerate} 
+                isGenerating={isGenerating}
+              />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <Button onClick={handleNewSketch} size="lg">
+                  <Plus className="h-5 w-5 mr-2" />
+                  Generate New Sketch
+                </Button>
+              </div>
               <SketchGallery onSketchClick={handleSketchClick} />
-            </div>}
+            </div>
+          )}
         </div>
-
-        <DeleteConfirmationDialog
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-          onConfirm={handleDeleteConfirm}
-          title={results?.originalPrompt || 'this sketch'}
-        />
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default GenerateSketch;
