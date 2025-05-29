@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Trash2, Calendar, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGeneratedSketches, GeneratedSketch } from '@/hooks/useGeneratedSketches';
 import { toast } from 'sonner';
+import { ImageModal } from './ImageModal';
 
 interface SketchGalleryProps {
   onSketchClick?: (sketch: GeneratedSketch) => void;
@@ -10,6 +12,7 @@ interface SketchGalleryProps {
 
 export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
   const { sketches, isLoading, deleteSketch } = useGeneratedSketches();
+  const [modalImage, setModalImage] = useState<{ url: string; title: string } | null>(null);
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -29,6 +32,11 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleImageClick = (imageUrl: string, title: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setModalImage({ url: imageUrl, title });
   };
 
   if (isLoading) {
@@ -71,7 +79,8 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
                       <img 
                         src={sketch.visualized_image} 
                         alt="Visualized" 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain cursor-pointer"
+                        onClick={(e) => handleImageClick(sketch.visualized_image!, 'Visualized Image', e)}
                       />
                       <Button
                         size="icon"
@@ -91,7 +100,8 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
                       <img 
                         src={sketch.flat_sketch_image} 
                         alt="Flat Sketch" 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain cursor-pointer"
+                        onClick={(e) => handleImageClick(sketch.flat_sketch_image!, 'Flat Sketch', e)}
                       />
                       <Button
                         size="icon"
@@ -120,6 +130,15 @@ export const SketchGallery = ({ onSketchClick }: SketchGalleryProps) => {
           </Card>
         ))}
       </div>
+
+      {modalImage && (
+        <ImageModal
+          isOpen={!!modalImage}
+          onClose={() => setModalImage(null)}
+          imageUrl={modalImage.url}
+          title={modalImage.title}
+        />
+      )}
     </div>
   );
 };

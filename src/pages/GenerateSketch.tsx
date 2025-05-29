@@ -8,6 +8,7 @@ import { SketchGallery } from '@/components/sketch/SketchGallery';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { GeneratedSketch } from '@/hooks/useGeneratedSketches';
+
 export interface GenerationOptions {
   visualized: boolean;
   flatSketch: boolean;
@@ -23,10 +24,12 @@ export interface GenerationResult {
   flatSketchImage?: string;
   originalPrompt: string;
 }
+
 const GenerateSketch = () => {
   const [results, setResults] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
   const handleGenerate = async (request: GenerationRequest) => {
     setIsGenerating(true);
     try {
@@ -52,14 +55,17 @@ const GenerateSketch = () => {
       setIsGenerating(false);
     }
   };
+
   const handleStartOver = () => {
     setResults(null);
     setShowForm(false);
   };
+
   const handleNewSketch = () => {
     setResults(null);
     setShowForm(true);
   };
+
   const handleSketchClick = (sketch: GeneratedSketch) => {
     setResults({
       id: sketch.id,
@@ -69,6 +75,7 @@ const GenerateSketch = () => {
     });
     setShowForm(false);
   };
+
   return <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
@@ -94,11 +101,12 @@ const GenerateSketch = () => {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 
                 <div className="flex flex-col sm:flex-row gap-2">
+                  <Button variant="outline" onClick={handleStartOver} className="text-sm">
+                    <ArrowLeft className="h-4 w-4 mr-2" />
+                    Back to Gallery
+                  </Button>
                   <Button variant="outline" onClick={handleNewSketch} className="text-sm bg-slate-900 hover:bg-slate-800 text-slate-50">
                     Generate New
-                  </Button>
-                  <Button variant="outline" onClick={handleStartOver} className="text-sm">
-                    Back to Gallery
                   </Button>
                 </div>
               </div>
@@ -107,6 +115,7 @@ const GenerateSketch = () => {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <h2 className="text-lg sm:text-xl font-semibold">Generate New Sketch</h2>
                 <Button variant="outline" onClick={handleStartOver} className="text-sm">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Gallery
                 </Button>
               </div>
@@ -121,4 +130,5 @@ const GenerateSketch = () => {
       </div>
     </div>;
 };
+
 export default GenerateSketch;
