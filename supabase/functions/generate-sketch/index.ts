@@ -31,24 +31,36 @@ serve(async (req) => {
       originalPrompt: prompt
     };
 
+    // Convert image URLs to blobs for form data
+    const imageBlobs = await Promise.all(
+      images.map(async (imageUrl: string) => {
+        const response = await fetch(imageUrl);
+        return await response.blob();
+      })
+    );
+
     // Generate visualized image if requested
     if (options.visualized) {
       const visualizedPrompt = `Create a highly detailed, realistic visualization of this clothing design: ${prompt}. Show it as it would look when worn, with proper lighting, textures, and professional fashion photography style.`;
       
-      const visualizedResponse = await fetch('https://api.openai.com/v1/images/generations', {
+      const formData = new FormData();
+      formData.append('model', 'gpt-image-1');
+      formData.append('prompt', visualizedPrompt);
+      formData.append('n', '1');
+      formData.append('size', '1024x1024');
+      formData.append('quality', 'high');
+      
+      // Add images to form data
+      imageBlobs.forEach((blob, index) => {
+        formData.append('image[]', blob, `image_${index}.png`);
+      });
+
+      const visualizedResponse = await fetch('https://api.openai.com/v1/images/edits', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'gpt-image-1',
-          prompt: visualizedPrompt,
-          n: 1,
-          size: '1024x1024',
-          quality: 'high',
-          output_format: 'png',
-        }),
+        body: formData,
       });
 
       if (!visualizedResponse.ok) {
@@ -58,7 +70,7 @@ serve(async (req) => {
       }
 
       const visualizedData = await visualizedResponse.json();
-      // gpt-image-1 returns base64 data, so we need to convert it to a data URL
+      // gpt-image-1 returns base64 data
       const base64Image = visualizedData.data[0].b64_json;
       results.visualizedImage = `data:image/png;base64,${base64Image}`;
     }
@@ -67,20 +79,24 @@ serve(async (req) => {
     if (options.flatSketch) {
       const sketchPrompt = `Create a clean, technical flat sketch of this clothing design: ${prompt}. Show it as a professional fashion flat drawing with clear lines, no shading, white background, technical illustration style.`;
       
-      const sketchResponse = await fetch('https://api.openai.com/v1/images/generations', {
+      const formData = new FormData();
+      formData.append('model', 'gpt-image-1');
+      formData.append('prompt', sketchPrompt);
+      formData.append('n', '1');
+      formData.append('size', '1024x1024');
+      formData.append('quality', 'high');
+      
+      // Add images to form data
+      imageBlobs.forEach((blob, index) => {
+        formData.append('image[]', blob, `image_${index}.png`);
+      });
+
+      const sketchResponse = await fetch('https://api.openai.com/v1/images/edits', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${openAIApiKey}`,
-          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'gpt-image-1',
-          prompt: sketchPrompt,
-          n: 1,
-          size: '1024x1024',
-          quality: 'high',
-          output_format: 'png',
-        }),
+        body: formData,
       });
 
       if (!sketchResponse.ok) {
@@ -90,7 +106,7 @@ serve(async (req) => {
       }
 
       const sketchData = await sketchResponse.json();
-      // gpt-image-1 returns base64 data, so we need to convert it to a data URL
+      // gpt-image-1 returns base64 data
       const base64Image = sketchData.data[0].b64_json;
       results.flatSketchImage = `data:image/png;base64,${base64Image}`;
     }
