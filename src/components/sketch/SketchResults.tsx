@@ -35,7 +35,7 @@ export const SketchResults = ({
         <CardContent>
           <div className="space-y-4">
             <div>
-              <h3 className="font-medium mb-2">Original Prompt:</h3>
+              <h3 className="font-medium mb-2 text-base">Original Prompt:</h3>
               <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
                 {results.originalPrompt}
               </p>
