@@ -54,6 +54,8 @@ export const generateProjectPDF = async (
     }
   }
 
-  // Download PDF instead of opening in browser
-  pdf.save(`${project.title}-cut-ticket.pdf`);
+  // Open PDF in browser instead of downloading
+  const pdfBlob = pdf.output('blob');
+  const pdfUrl = URL.createObjectURL(pdfBlob);
+  window.open(pdfUrl, '_blank');
 };

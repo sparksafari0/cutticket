@@ -1,76 +1,113 @@
-
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Project } from '@/types/project';
 import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
 import { ProjectForm } from '@/components/ProjectForm';
 import { ProjectList } from '@/components/ProjectList';
 import { useProjects } from '@/hooks/useProjects';
 
+type FilterType = 'current' | 'completed';
+
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState(null);
+  const [editingProject, setEditingProject] = useState<Project | undefined>();
+  const [filter, setFilter] = useState<FilterType>('current');
   const { projects, isLoading, addProject, updateProject, deleteProject } = useProjects();
 
-  if (isLoading) {
-    return <div>Loading projects...</div>;
-  }
+  const handleAddProject = (data: Partial<Project>) => {
+    addProject.mutate(data);
+    setIsFormOpen(false);
+  };
 
-  const handleEdit = (project) => {
+  const handleEditProject = (project: Project) => {
     setEditingProject(project);
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleUpdateProject = (data: Partial<Project>) => {
+    if (!editingProject) return;
+    updateProject.mutate({ ...data, id: editingProject.id });
+    setIsFormOpen(false);
+    setEditingProject(undefined);
+  };
+
+  const handleDeleteProject = (id: string) => {
     deleteProject.mutate(id);
+    setIsFormOpen(false);
+    setEditingProject(undefined);
   };
 
-  const handleFormSubmit = (data) => {
+  const handleDeleteFromForm = () => {
     if (editingProject) {
-      updateProject.mutate({ ...editingProject, ...data });
-    } else {
-      addProject.mutate(data);
+      handleDeleteProject(editingProject.id);
     }
-    setIsFormOpen(false);
-    setEditingProject(null);
   };
 
-  const handleFormClose = () => {
-    setIsFormOpen(false);
-    setEditingProject(null);
-  };
+  // Filter projects based on current filter
+  const filteredProjects = projects.filter(project => {
+    if (filter === 'current') {
+      return project.status === 'not_started' || project.status === 'in_progress';
+    } else {
+      return project.status === 'completed';
+    }
+  });
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">Project Manager</h1>
-          <div className="flex gap-2">
-            <Link to="/generate-sketch">
-              <Button variant="outline">
-                Generate Sketch
-              </Button>
-            </Link>
-            <Button onClick={() => setIsFormOpen(true)}>
-              Add New Project
-            </Button>
-          </div>
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="sticky top-0 z-10 flex justify-between items-center mb-6 py-4 bg-gray-50">
+          <h1 className="text-2xl font-bold text-gray-900">Production Tracker</h1>
+          <Button onClick={() => setIsFormOpen(true)} className="pointer-events-auto">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Project
+          </Button>
         </div>
 
-        {/* Project List */}
-        <ProjectList 
-          projects={projects} 
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+        {/* Filter Buttons */}
+        <div className="flex gap-3 mb-6">
+          <Button
+            variant={filter === 'current' ? 'default' : 'outline'}
+            onClick={() => setFilter('current')}
+            className="px-6 py-2 rounded-full font-medium transition-all duration-200"
+          >
+            Current
+          </Button>
+          <Button
+            variant={filter === 'completed' ? 'default' : 'outline'}
+            onClick={() => setFilter('completed')}
+            className="px-6 py-2 rounded-full font-medium transition-all duration-200"
+          >
+            Completed
+          </Button>
+        </div>
+
+        {filteredProjects.length === 0 && !isLoading && (
+          <div className="text-center py-8">
+            <p className="text-lg text-gray-500 mb-4">
+              {filter === 'current' ? 'No current projects' : 'No completed projects'}
+            </p>
+            <Button onClick={() => setIsFormOpen(true)} variant="outline" className="pointer-events-auto">
+              Create your first project
+            </Button>
+          </div>
+        )}
+
+        <ProjectList
+          projects={filteredProjects}
+          onEdit={handleEditProject}
+          onDelete={handleDeleteProject}
+          filter={filter}
         />
 
-        {/* Project Form Modal */}
-        <ProjectForm 
-          open={isFormOpen} 
-          onOpenChange={handleFormClose}
-          onSubmit={handleFormSubmit}
+        <ProjectForm
+          open={isFormOpen}
+          onOpenChange={(open) => {
+            setIsFormOpen(open);
+            if (!open) setEditingProject(undefined);
+          }}
+          onSubmit={editingProject ? handleUpdateProject : handleAddProject}
           initialData={editingProject}
-          onDelete={editingProject ? () => handleDelete(editingProject.id) : undefined}
+          onDelete={editingProject ? handleDeleteFromForm : undefined}
         />
       </div>
     </div>

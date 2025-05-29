@@ -47,8 +47,6 @@ const ProjectInfo = ({
         </div>
       )}
       
-      <GenerateCutTicketButton project={project} />
-      
       <ProjectPickupStatus project={project} onPickedUpChange={onPickedUpChange} />
       
       <ProjectImageDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
@@ -56,6 +54,8 @@ const ProjectInfo = ({
       <ProjectFabricDisplay project={project} onSetExpandedPhoto={onSetExpandedPhoto} />
       
       <ProjectNotes project={project} />
+      
+      <GenerateCutTicketButton project={project} />
       
       <ProjectActionButtons onEdit={onEdit} onClose={onClose} />
     </div>
