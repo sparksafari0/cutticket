@@ -39,9 +39,11 @@ serve(async (req) => {
       })
     );
 
+    let visualizedImageBlob: Blob | null = null;
+
     // Generate visualized image if requested
     if (options.visualized) {
-      const visualizedPrompt = `Create a highly detailed, realistic visualization of this clothing design: ${prompt}. Show it as it would look when worn, with proper lighting, textures, and professional fashion photography style.`;
+      const visualizedPrompt = `Create a highly detailed, realistic visualization of this clothing design: ${prompt}. Show it as a product photography image of just the product, showing textures and details.`;
       
       const formData = new FormData();
       formData.append('model', 'gpt-image-1');
@@ -73,11 +75,32 @@ serve(async (req) => {
       // gpt-image-1 returns base64 data
       const base64Image = visualizedData.data[0].b64_json;
       results.visualizedImage = `data:image/png;base64,${base64Image}`;
+
+      // Convert base64 to blob for potential use in flat sketch
+      if (options.flatSketch) {
+        const binaryString = atob(base64Image);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        visualizedImageBlob = new Blob([bytes], { type: 'image/png' });
+      }
     }
 
     // Generate flat sketch if requested
     if (options.flatSketch) {
-      const sketchPrompt = `Create a clean, technical flat sketch of this clothing design: ${prompt}. Show it as a professional fashion flat drawing with clear lines, no shading, white background, technical illustration style.`;
+      let sketchPrompt: string;
+      let imagesToUse: Blob[];
+
+      if (options.visualized && visualizedImageBlob) {
+        // If both options selected, use only the visualized image output and simplified prompt
+        sketchPrompt = `Create a clean, technical flat sketch of this clothing design. Show it as a professional fashion flat drawing with clear lines, no shading, white background, technical illustration style.`;
+        imagesToUse = [visualizedImageBlob];
+      } else {
+        // If only flat sketch selected, use original images and user prompt
+        sketchPrompt = `Create a clean, technical flat sketch of this clothing design: ${prompt}. Show it as a professional fashion flat drawing with clear lines, no shading, white background, technical illustration style.`;
+        imagesToUse = imageBlobs;
+      }
       
       const formData = new FormData();
       formData.append('model', 'gpt-image-1');
@@ -87,7 +110,7 @@ serve(async (req) => {
       formData.append('quality', 'high');
       
       // Add images to form data
-      imageBlobs.forEach((blob, index) => {
+      imagesToUse.forEach((blob, index) => {
         formData.append('image[]', blob, `image_${index}.png`);
       });
 

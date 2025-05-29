@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { Upload, Camera, Image, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,7 +19,7 @@ export const SketchUploadForm = ({
   isGenerating
 }: SketchUploadFormProps) => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-  const [prompt, setPrompt] = useState('');
+  const [fullPrompt, setFullPrompt] = useState('I want to make a ');
   const [options, setOptions] = useState<GenerationOptions>({
     visualized: false,
     flatSketch: false
@@ -175,13 +176,28 @@ export const SketchUploadForm = ({
     }));
   };
 
-  const canGenerate = uploadedImages.length > 0 && prompt.trim() && (options.visualized || options.flatSketch);
+  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    // Always ensure it starts with "I want to make a "
+    if (!value.startsWith('I want to make a ')) {
+      setFullPrompt('I want to make a ');
+    } else {
+      setFullPrompt(value);
+    }
+  };
+
+  // Extract only the user-typed portion after "I want to make a "
+  const getUserPrompt = () => {
+    return fullPrompt.replace('I want to make a ', '').trim();
+  };
+
+  const canGenerate = uploadedImages.length > 0 && getUserPrompt() && (options.visualized || options.flatSketch);
 
   const handleSubmit = () => {
     if (canGenerate) {
       onGenerate({
         images: uploadedImages,
-        prompt: prompt.trim(),
+        prompt: getUserPrompt(),
         options
       });
     }
@@ -280,57 +296,54 @@ export const SketchUploadForm = ({
             </div>
           </div>
 
-          {/* Prompt Section */}
+          {/* Combined Prompt and Options Section */}
           <div className="space-y-3">
-            <Textarea
-              placeholder="What design of clothes you want to make...?"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[80px] resize-none border-gray-300 text-base placeholder:text-gray-400 focus:border-primary"
-            />
-            <div className="text-xs text-gray-500">
-              Text box where you can write the description. This is basically where the prompt goes which will be sent to the ChatGPT API. Prompt required.
-            </div>
-          </div>
-
-          {/* Generation Options and Button - Mobile responsive */}
-          <div className="flex flex-col gap-4">
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={() => toggleOption('visualized')}
-                disabled={isGenerating}
-                className={`h-12 px-4 text-sm border-2 rounded-md transition-all flex items-center justify-center gap-2 ${
-                  options.visualized 
-                    ? 'border-primary bg-primary text-primary-foreground' 
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
-                }`}
-              >
-                <div className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center ${
-                  options.visualized ? 'border-white bg-white' : 'border-gray-400'
-                }`}>
-                  {options.visualized && <Check className="h-3 w-3 text-primary" />}
-                </div>
-                <span>Visualized Image</span>
-              </button>
+            <div className="relative">
+              <Textarea
+                value={fullPrompt}
+                onChange={handlePromptChange}
+                className="min-h-[120px] resize-none border-gray-300 text-base placeholder:text-gray-400 focus:border-primary pr-4 pb-16"
+                placeholder="I want to make a "
+              />
               
-              <button
-                type="button"
-                onClick={() => toggleOption('flatSketch')}
-                disabled={isGenerating}
-                className={`h-12 px-4 text-sm border-2 rounded-md transition-all flex items-center justify-center gap-2 ${
-                  options.flatSketch 
-                    ? 'border-primary bg-primary text-primary-foreground' 
-                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
-                }`}
-              >
-                <div className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center ${
-                  options.flatSketch ? 'border-white bg-white' : 'border-gray-400'
-                }`}>
-                  {options.flatSketch && <Check className="h-3 w-3 text-primary" />}
-                </div>
-                <span>Flat sketch</span>
-              </button>
+              {/* Inline checkboxes positioned at bottom right of textarea */}
+              <div className="absolute bottom-3 right-3 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => toggleOption('visualized')}
+                  disabled={isGenerating}
+                  className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${
+                    options.visualized 
+                      ? 'border-primary bg-primary text-primary-foreground' 
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`w-3 h-3 border rounded-sm flex items-center justify-center ${
+                    options.visualized ? 'border-white bg-white' : 'border-gray-400'
+                  }`}>
+                    {options.visualized && <Check className="h-2 w-2 text-primary" />}
+                  </div>
+                  <span>Visualized Image</span>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => toggleOption('flatSketch')}
+                  disabled={isGenerating}
+                  className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${
+                    options.flatSketch 
+                      ? 'border-primary bg-primary text-primary-foreground' 
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                  }`}
+                >
+                  <div className={`w-3 h-3 border rounded-sm flex items-center justify-center ${
+                    options.flatSketch ? 'border-white bg-white' : 'border-gray-400'
+                  }`}>
+                    {options.flatSketch && <Check className="h-2 w-2 text-primary" />}
+                  </div>
+                  <span>Flat sketch</span>
+                </button>
+              </div>
             </div>
             
             <Button
@@ -354,7 +367,7 @@ export const SketchUploadForm = ({
           {!canGenerate && (
             <div className="text-sm text-red-500 space-y-1">
               {!uploadedImages.length && <div>• Please upload at least 1 image</div>}
-              {!prompt.trim() && <div>• Please describe your design</div>}
+              {!getUserPrompt() && <div>• Please describe your design</div>}
               {!options.visualized && !options.flatSketch && <div>• Please select at least one generation option</div>}
             </div>
           )}
