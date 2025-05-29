@@ -29,7 +29,7 @@ export const SketchPromptInput = ({
       <div className="border border-gray-300 rounded-lg overflow-hidden w-full">
         {/* Top section with "I want to make a" and checkboxes */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 py-3 bg-gray-50/50 border-b border-gray-200">
-          <span className="text-base font-bold italic whitespace-nowrap text-red-500">I want to make a</span>
+          <span className="text-base font-bold italic whitespace-nowrap text-red-500">I want to make a...</span>
           
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <button type="button" onClick={() => toggleOption('visualized')} disabled={disabled} className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${options.visualized ? 'border-primary bg-primary text-primary-foreground' : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'}`}>
