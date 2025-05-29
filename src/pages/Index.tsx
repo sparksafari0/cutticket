@@ -1,113 +1,111 @@
+
 import { useState } from 'react';
-import { Project } from '@/types/project';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ProjectForm } from '@/components/ProjectForm';
 import { ProjectList } from '@/components/ProjectList';
 import { useProjects } from '@/hooks/useProjects';
 
-type FilterType = 'current' | 'completed';
-
 const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | undefined>();
-  const [filter, setFilter] = useState<FilterType>('current');
+  const [editingProject, setEditingProject] = useState(null);
+  const [filter, setFilter] = useState<'current' | 'completed'>('current');
   const { projects, isLoading, addProject, updateProject, deleteProject } = useProjects();
 
-  const handleAddProject = (data: Partial<Project>) => {
-    addProject.mutate(data);
-    setIsFormOpen(false);
-  };
+  if (isLoading) {
+    return <div>Loading projects...</div>;
+  }
 
-  const handleEditProject = (project: Project) => {
+  const handleEdit = (project) => {
     setEditingProject(project);
     setIsFormOpen(true);
   };
 
-  const handleUpdateProject = (data: Partial<Project>) => {
-    if (!editingProject) return;
-    updateProject.mutate({ ...data, id: editingProject.id });
-    setIsFormOpen(false);
-    setEditingProject(undefined);
-  };
-
-  const handleDeleteProject = (id: string) => {
+  const handleDelete = (id) => {
     deleteProject.mutate(id);
-    setIsFormOpen(false);
-    setEditingProject(undefined);
   };
 
-  const handleDeleteFromForm = () => {
+  const handleFormSubmit = (data) => {
     if (editingProject) {
-      handleDeleteProject(editingProject.id);
+      updateProject.mutate({ ...editingProject, ...data });
+    } else {
+      addProject.mutate(data);
     }
+    setIsFormOpen(false);
+    setEditingProject(null);
   };
 
-  // Filter projects based on current filter
+  const handleFormClose = () => {
+    setIsFormOpen(false);
+    setEditingProject(null);
+  };
+
+  // Filter projects based on status
   const filteredProjects = projects.filter(project => {
-    if (filter === 'current') {
-      return project.status === 'not_started' || project.status === 'in_progress';
-    } else {
+    if (filter === 'completed') {
       return project.status === 'completed';
+    } else {
+      return project.status !== 'completed';
     }
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="sticky top-0 z-10 flex justify-between items-center mb-6 py-4 bg-gray-50">
-          <h1 className="text-2xl font-bold text-gray-900">Production Tracker</h1>
-          <Button onClick={() => setIsFormOpen(true)} className="pointer-events-auto">
-            <Plus className="h-4 w-4 mr-2" />
-            Add Project
-          </Button>
-        </div>
-
-        {/* Filter Buttons */}
-        <div className="flex gap-3 mb-6">
-          <Button
-            variant={filter === 'current' ? 'default' : 'outline'}
-            onClick={() => setFilter('current')}
-            className="px-6 py-2 rounded-full font-medium transition-all duration-200"
-          >
-            Current
-          </Button>
-          <Button
-            variant={filter === 'completed' ? 'default' : 'outline'}
-            onClick={() => setFilter('completed')}
-            className="px-6 py-2 rounded-full font-medium transition-all duration-200"
-          >
-            Completed
-          </Button>
-        </div>
-
-        {filteredProjects.length === 0 && !isLoading && (
-          <div className="text-center py-8">
-            <p className="text-lg text-gray-500 mb-4">
-              {filter === 'current' ? 'No current projects' : 'No completed projects'}
-            </p>
-            <Button onClick={() => setIsFormOpen(true)} variant="outline" className="pointer-events-auto">
-              Create your first project
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold">Project Manager</h1>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Link to="/generate-sketch" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto text-sm">
+                Generate Sketch
+              </Button>
+            </Link>
+            <Button onClick={() => setIsFormOpen(true)} className="w-full sm:w-auto text-sm">
+              Add New Project
             </Button>
           </div>
-        )}
+        </div>
 
-        <ProjectList
-          projects={filteredProjects}
-          onEdit={handleEditProject}
-          onDelete={handleDeleteProject}
+        {/* Filter Toggle */}
+        <div className="mb-8">
+          <ToggleGroup
+            type="single"
+            value={filter}
+            onValueChange={(value) => value && setFilter(value as 'current' | 'completed')}
+            className="justify-start"
+          >
+            <ToggleGroupItem 
+              value="current" 
+              className="data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full px-6 py-2"
+            >
+              Current
+            </ToggleGroupItem>
+            <ToggleGroupItem 
+              value="completed"
+              className="data-[state=on]:bg-slate-900 data-[state=on]:text-white bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-full px-6 py-2"
+            >
+              Completed
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        {/* Project List */}
+        <ProjectList 
+          projects={filteredProjects} 
+          onEdit={handleEdit}
+          onDelete={handleDelete}
           filter={filter}
         />
 
-        <ProjectForm
-          open={isFormOpen}
-          onOpenChange={(open) => {
-            setIsFormOpen(open);
-            if (!open) setEditingProject(undefined);
-          }}
-          onSubmit={editingProject ? handleUpdateProject : handleAddProject}
+        {/* Project Form Modal */}
+        <ProjectForm 
+          open={isFormOpen} 
+          onOpenChange={handleFormClose}
+          onSubmit={handleFormSubmit}
           initialData={editingProject}
-          onDelete={editingProject ? handleDeleteFromForm : undefined}
+          onDelete={editingProject ? () => handleDelete(editingProject.id) : undefined}
         />
       </div>
     </div>
