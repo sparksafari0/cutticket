@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { Upload, Camera, Image, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -177,13 +176,7 @@ export const SketchUploadForm = ({
   };
 
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    // Always ensure it starts with "I want to make a "
-    if (!value.startsWith('I want to make a ')) {
-      setFullPrompt('I want to make a ');
-    } else {
-      setFullPrompt(value);
-    }
+    setFullPrompt(e.target.value);
   };
 
   // Extract only the user-typed portion after "I want to make a "
@@ -296,18 +289,13 @@ export const SketchUploadForm = ({
             </div>
           </div>
 
-          {/* Combined Prompt and Options Section */}
-          <div className="space-y-3">
-            <div className="relative">
-              <Textarea
-                value={fullPrompt}
-                onChange={handlePromptChange}
-                className="min-h-[120px] resize-none border-gray-300 text-base placeholder:text-gray-400 focus:border-primary pr-4 pb-16"
-                placeholder="I want to make a "
-              />
+          {/* Prompt and Options Section */}
+          <div className="space-y-4">
+            {/* Header with "I want to make a" and checkboxes */}
+            <div className="flex items-center justify-between gap-4 mb-3">
+              <span className="text-base font-bold italic text-gray-500">I want to make a</span>
               
-              {/* Inline checkboxes positioned at bottom right of textarea */}
-              <div className="absolute bottom-3 right-3 flex gap-3">
+              <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => toggleOption('visualized')}
@@ -344,6 +332,16 @@ export const SketchUploadForm = ({
                   <span>Flat sketch</span>
                 </button>
               </div>
+            </div>
+            
+            {/* Text input area */}
+            <div className="relative">
+              <Textarea
+                value={fullPrompt}
+                onChange={handlePromptChange}
+                className="min-h-[120px] resize-none border-gray-300 text-base placeholder:text-gray-400 focus:border-primary"
+                placeholder="Enter your design description here..."
+              />
             </div>
             
             <Button
