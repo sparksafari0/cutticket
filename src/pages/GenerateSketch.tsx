@@ -5,6 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SketchUploadForm } from '@/components/sketch/SketchUploadForm';
 import { SketchResults } from '@/components/sketch/SketchResults';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface GenerationOptions {
   visualized: boolean;
@@ -30,24 +32,22 @@ const GenerateSketch = () => {
   const handleGenerate = async (request: GenerationRequest) => {
     setIsGenerating(true);
     try {
-      // Here we'll call the OpenAI API to generate images
-      const response = await fetch('/api/generate-sketch', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request),
+      // Call the Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('generate-sketch', {
+        body: request,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate images');
+      if (error) {
+        console.error('Error generating images:', error);
+        toast.error('Failed to generate images. Please try again.');
+        return;
       }
 
-      const result = await response.json();
-      setResults(result);
+      setResults(data);
+      toast.success('Images generated successfully!');
     } catch (error) {
       console.error('Error generating images:', error);
-      // You might want to show a toast error here
+      toast.error('Failed to generate images. Please try again.');
     } finally {
       setIsGenerating(false);
     }
