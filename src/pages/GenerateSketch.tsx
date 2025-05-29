@@ -1,6 +1,7 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SketchUploadForm } from '@/components/sketch/SketchUploadForm';
 import { SketchResults } from '@/components/sketch/SketchResults';
@@ -129,19 +130,13 @@ const GenerateSketch = () => {
                     Generate New
                   </Button>
                 </div>
-                
-                {results.id && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleDeleteClick}
-                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
               </div>
-              <SketchResults results={results} onStartOver={handleStartOver} isGenerating={isGenerating} />
+              <SketchResults 
+                results={results} 
+                onStartOver={handleStartOver} 
+                isGenerating={isGenerating}
+                onDelete={results.id ? handleDeleteClick : undefined}
+              />
             </div> : showForm ? <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <h2 className="text-lg sm:text-xl font-semibold">Generate New Sketch</h2>
