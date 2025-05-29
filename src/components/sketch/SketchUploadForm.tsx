@@ -1,10 +1,10 @@
-
 import { useState, useRef } from 'react';
-import { Upload, Camera, Image } from 'lucide-react';
+import { Upload, Camera, Image, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Card, CardContent } from '@/components/ui/card';
+import { Toggle } from '@/components/ui/toggle';
 import { supabase } from '@/integrations/supabase/client';
 import { GenerationRequest, GenerationOptions } from '@/pages/GenerateSketch';
 
@@ -13,7 +13,10 @@ interface SketchUploadFormProps {
   isGenerating: boolean;
 }
 
-export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormProps) => {
+export const SketchUploadForm = ({
+  onGenerate,
+  isGenerating
+}: SketchUploadFormProps) => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [prompt, setPrompt] = useState('');
   const [options, setOptions] = useState<GenerationOptions>({
@@ -22,7 +25,6 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
   });
   const [uploading, setUploading] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
-  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,19 +33,16 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
 
     try {
       setUploading(true);
-
-      // Check if we've reached the limit of 6 photos
+      
       if (uploadedImages.length >= 6) {
         console.error('Maximum 6 images allowed');
         return;
       }
 
-      // Create a unique file path
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
       const filePath = `sketch-uploads/${fileName}`;
 
-      // Upload the file to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('project-images')
         .upload(filePath, file);
@@ -53,12 +52,10 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
         return;
       }
 
-      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('project-images')
         .getPublicUrl(filePath);
 
-      // Update the uploaded images
       setUploadedImages(prev => [...prev, publicUrl]);
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -84,11 +81,11 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
         const filePath = `sketch-uploads/${fileName}`;
-        
+
         const { error: uploadError } = await supabase.storage
           .from('project-images')
           .upload(filePath, file);
-        
+
         if (uploadError) {
           console.error('Error uploading image:', uploadError);
           return null;
@@ -97,7 +94,7 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
         const { data: { publicUrl } } = supabase.storage
           .from('project-images')
           .getPublicUrl(filePath);
-        
+
         return publicUrl;
       });
 
@@ -153,7 +150,7 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
 
     const files = Array.from(e.dataTransfer.files);
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
-    
+
     if (imageFiles.length > 0) {
       if (imageFiles.length === 1) {
         await handleImageUpload(imageFiles[0]);
@@ -191,165 +188,198 @@ export const SketchUploadForm = ({ onGenerate, isGenerating }: SketchUploadFormP
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      {/* Upload Images Section */}
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-        <h2 className="text-lg font-semibold mb-4 text-center">Upload images</h2>
-        
-        {/* Upload Area */}
-        <div 
-          className={`w-full h-40 bg-gray-100 border-2 border-dashed rounded-md flex items-center justify-center mb-4 transition-colors ${
-            isDragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
-          }`}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-        >
-          {uploadedImages.length > 0 ? (
-            <div className="grid grid-cols-3 gap-2 w-full p-4 overflow-y-auto max-h-32">
-              {uploadedImages.map((image, index) => (
-                <div key={index} className="relative aspect-square bg-gray-100 rounded-md overflow-hidden">
-                  <img src={image} alt={`Upload ${index + 1}`} className="w-full h-full object-cover" />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="destructive"
-                    className="absolute top-1 right-1 h-6 w-6"
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    ×
-                  </Button>
+    <div className="max-w-3xl mx-auto">
+      <Card className="border-2">
+        <CardContent className="p-4 sm:p-8 space-y-6 sm:space-y-8">
+          {/* Upload Section */}
+          <div className="space-y-4">
+            <div 
+              className={`relative min-h-[180px] sm:min-h-[200px] border-2 border-dashed rounded-xl p-4 sm:p-8 transition-all cursor-pointer ${
+                isDragOver 
+                  ? 'border-primary bg-primary/5' 
+                  : 'border-gray-300 hover:border-primary/50 bg-gray-50/50'
+              }`}
+              onDragEnter={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onClick={triggerFileUpload}
+            >
+              {uploadedImages.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <h3 className="text-base sm:text-lg font-medium mb-2">Upload images</h3>
+                    <div className="flex gap-2 justify-center text-xs">
+                      <span>{uploadedImages.length}/6 images uploaded</span>
+                      <span>•</span>
+                      <span className="text-green-600">At least 1 photo required</span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-w-sm mx-auto">
+                    {uploadedImages.map((image, index) => (
+                      <div key={index} className="relative aspect-square bg-white rounded-lg overflow-hidden border group">
+                        <img 
+                          src={image} 
+                          alt={`Reference ${index + 1}`} 
+                          className="w-full h-full object-cover" 
+                        />
+                        <Button
+                          type="button"
+                          size="icon"
+                          variant="destructive"
+                          className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImage(index);
+                          }}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center">
+                  <div className="mb-4 sm:mb-6">
+                    <Image className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 text-gray-400" />
+                    <h3 className="text-base sm:text-lg font-medium mb-2">Upload images</h3>
+                    <p className="text-sm text-gray-500 mb-4">
+                      Drag and drop images or click to browse
+                    </p>
+                  </div>
+                </div>
+              )}
+              
+              {/* Upload type badges - responsive grid */}
+              <div className="grid grid-cols-1 gap-2 justify-center mt-4 max-w-md mx-auto">
+                <div className="flex flex-wrap justify-center gap-2">
+                  <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
+                    <span>✏️</span>
+                    <span className="text-center">Hand/Flat sketches</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
+                    <span>👕</span>
+                    <span className="text-center">Reference images</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 border border-dashed border-gray-300 rounded-full text-xs text-gray-600">
+                    <span>🧵</span>
+                    <span className="text-center">Fabric swatches</span>
+                  </div>
+                </div>
+              </div>
+              
+              {uploading && (
+                <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
+                    <p className="text-sm">Uploading...</p>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center text-gray-500">
-              <Image className="h-10 w-10 mb-2" />
-              <span className="text-center">
-                {isDragOver ? 'Drop images here' : 'Drag & drop images here'}
-              </span>
+          </div>
+
+          {/* Prompt Section */}
+          <div className="space-y-3">
+            <Textarea
+              placeholder="What design of clothes you want to make...?"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="min-h-[80px] resize-none border-gray-300 text-base placeholder:text-gray-400 focus:border-primary"
+            />
+            <div className="text-xs text-gray-500">
+              Text box where you can write the description. This is basically where the prompt goes which will be sent to the ChatGPT API. Prompt required.
+            </div>
+          </div>
+
+          {/* Generation Options and Button - Mobile responsive */}
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => toggleOption('visualized')}
+                disabled={isGenerating}
+                className={`h-12 px-4 text-sm border-2 rounded-md transition-all flex items-center justify-center gap-2 ${
+                  options.visualized 
+                    ? 'border-primary bg-primary text-primary-foreground' 
+                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                }`}
+              >
+                <div className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center ${
+                  options.visualized ? 'border-white bg-white' : 'border-gray-400'
+                }`}>
+                  {options.visualized && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <span>Visualized Image</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => toggleOption('flatSketch')}
+                disabled={isGenerating}
+                className={`h-12 px-4 text-sm border-2 rounded-md transition-all flex items-center justify-center gap-2 ${
+                  options.flatSketch 
+                    ? 'border-primary bg-primary text-primary-foreground' 
+                    : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                }`}
+              >
+                <div className={`w-4 h-4 border-2 rounded-sm flex items-center justify-center ${
+                  options.flatSketch ? 'border-white bg-white' : 'border-gray-400'
+                }`}>
+                  {options.flatSketch && <Check className="h-3 w-3 text-primary" />}
+                </div>
+                <span>Flat sketch</span>
+              </button>
+            </div>
+            
+            <Button
+              onClick={handleSubmit}
+              disabled={!canGenerate || isGenerating}
+              className="h-12 px-6 sm:px-8 text-sm w-full"
+              size="lg"
+            >
+              {isGenerating ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Generating...
+                </>
+              ) : (
+                'Generate'
+              )}
+            </Button>
+          </div>
+
+          {/* Validation Messages */}
+          {!canGenerate && (
+            <div className="text-sm text-red-500 space-y-1">
+              {!uploadedImages.length && <div>• Please upload at least 1 image</div>}
+              {!prompt.trim() && <div>• Please describe your design</div>}
+              {!options.visualized && !options.flatSketch && <div>• Please select at least one generation option</div>}
             </div>
           )}
-        </div>
 
-        {/* Category badges */}
-        <div className="flex flex-wrap gap-2 mb-4 justify-center">
-          <Badge variant="outline">✏️ Hand/Flat sketches</Badge>
-          <Badge variant="outline">👕 Reference images</Badge>
-          <Badge variant="outline">📋 Fabric swatches</Badge>
-        </div>
-
-        {/* Upload Button */}
-        <div className="flex justify-center">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" disabled={uploading || uploadedImages.length >= 6}>
-                {uploading ? 'Uploading...' : 'Upload images'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-2 bg-background">
-              <div className="flex flex-col gap-2">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={triggerFileUpload}
-                  disabled={uploading}
-                  className="flex items-center gap-2"
-                >
-                  <Upload size={16} />
-                  Upload Images
-                </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={triggerCameraCapture}
-                  disabled={uploading}
-                  className="flex items-center gap-2"
-                >
-                  <Camera size={16} />
-                  Take Photo
-                </Button>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        <div className="text-xs text-muted-foreground text-center mt-2">
-          {uploading ? 'Uploading...' : `Allow uploading up to 6 photos. At least 1 photo required. (${6 - uploadedImages.length} remaining)`}
-        </div>
-
-        {/* Hidden file inputs */}
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={handleFileInputChange}
-          disabled={uploading}
-        />
-        <input
-          type="file"
-          ref={cameraInputRef}
-          accept="image/*"
-          capture="environment"
-          className="hidden"
-          onChange={handleFileInputChange}
-          disabled={uploading}
-        />
-      </div>
-
-      {/* Prompt Section */}
-      <div className="space-y-4">
-        <div className="text-center text-gray-600 italic">
-          What design of clothes you want to make...?
-        </div>
-        
-        <Textarea
-          placeholder="Describe your design..."
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className="min-h-[120px] resize-none"
-        />
-
-        {/* Generation Options */}
-        <div className="flex gap-4 justify-center">
-          <Button
-            variant={options.visualized ? "default" : "outline"}
-            onClick={() => toggleOption('visualized')}
-            disabled={isGenerating}
-          >
-            Visualized Image
-          </Button>
-          <Button
-            variant={options.flatSketch ? "default" : "outline"}
-            onClick={() => toggleOption('flatSketch')}
-            disabled={isGenerating}
-          >
-            Flat sketch
-          </Button>
-        </div>
-
-        {/* Generate Button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={handleSubmit}
-            disabled={!canGenerate || isGenerating}
-            className="px-8"
-          >
-            {isGenerating ? 'Generating...' : 'Generate'}
-          </Button>
-        </div>
-
-        {!canGenerate && (
-          <div className="text-sm text-red-500 text-center">
-            {!uploadedImages.length && "Please upload at least 1 image. "}
-            {!prompt.trim() && "Prompt required. "}
-            {!options.visualized && !options.flatSketch && "Please select at least one generation option."}
-          </div>
-        )}
-      </div>
+          {/* Hidden file inputs */}
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={handleFileInputChange}
+            disabled={uploading}
+          />
+          <input
+            type="file"
+            ref={cameraInputRef}
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleFileInputChange}
+            disabled={uploading}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 };

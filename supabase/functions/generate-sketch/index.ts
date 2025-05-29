@@ -1,6 +1,7 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
@@ -41,20 +42,25 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'dall-e-3',
+          model: 'gpt-image-1',
           prompt: visualizedPrompt,
           n: 1,
           size: '1024x1024',
-          quality: 'standard',
+          quality: 'high',
+          output_format: 'png',
         }),
       });
 
       if (!visualizedResponse.ok) {
+        const errorData = await visualizedResponse.json();
+        console.error('OpenAI API error for visualized image:', errorData);
         throw new Error(`OpenAI API error for visualized image: ${visualizedResponse.statusText}`);
       }
 
       const visualizedData = await visualizedResponse.json();
-      results.visualizedImage = visualizedData.data[0].url;
+      // gpt-image-1 returns base64 data, so we need to convert it to a data URL
+      const base64Image = visualizedData.data[0].b64_json;
+      results.visualizedImage = `data:image/png;base64,${base64Image}`;
     }
 
     // Generate flat sketch if requested
@@ -68,20 +74,47 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'dall-e-3',
+          model: 'gpt-image-1',
           prompt: sketchPrompt,
           n: 1,
           size: '1024x1024',
-          quality: 'standard',
+          quality: 'high',
+          output_format: 'png',
         }),
       });
 
       if (!sketchResponse.ok) {
+        const errorData = await sketchResponse.json();
+        console.error('OpenAI API error for flat sketch:', errorData);
         throw new Error(`OpenAI API error for flat sketch: ${sketchResponse.statusText}`);
       }
 
       const sketchData = await sketchResponse.json();
-      results.flatSketchImage = sketchData.data[0].url;
+      // gpt-image-1 returns base64 data, so we need to convert it to a data URL
+      const base64Image = sketchData.data[0].b64_json;
+      results.flatSketchImage = `data:image/png;base64,${base64Image}`;
+    }
+
+    // Save to database
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data: savedSketch, error: saveError } = await supabase
+      .from('generated_sketches')
+      .insert({
+        original_prompt: prompt,
+        visualized_image: results.visualizedImage || null,
+        flat_sketch_image: results.flatSketchImage || null,
+      })
+      .select()
+      .single();
+
+    if (saveError) {
+      console.error('Error saving sketch to database:', saveError);
+      // Don't throw error, just log it - we still want to return the generated images
+    } else {
+      results.id = savedSketch.id;
     }
 
     return new Response(JSON.stringify(results), {
