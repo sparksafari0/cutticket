@@ -32,7 +32,7 @@ export const SketchPromptInput = ({
   return (
     <div className="space-y-4">
       {/* Single unified card/box */}
-      <div className="border border-gray-300 rounded-lg overflow-hidden max-w-xl">
+      <div className="border border-gray-300 rounded-lg overflow-hidden w-full">
         {/* Top section with "I want to make a" and checkboxes */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 py-3 bg-gray-50/50 border-b border-gray-200">
           <span className="text-base font-bold italic text-gray-500 whitespace-nowrap">I want to make a</span>
