@@ -18,7 +18,7 @@ export const SketchUploadForm = ({
   isGenerating
 }: SketchUploadFormProps) => {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]);
-  const [fullPrompt, setFullPrompt] = useState('I want to make a ');
+  const [fullPrompt, setFullPrompt] = useState('');
   const [options, setOptions] = useState<GenerationOptions>({
     visualized: false,
     flatSketch: false
@@ -179,18 +179,13 @@ export const SketchUploadForm = ({
     setFullPrompt(e.target.value);
   };
 
-  // Extract only the user-typed portion after "I want to make a "
-  const getUserPrompt = () => {
-    return fullPrompt.replace('I want to make a ', '').trim();
-  };
-
-  const canGenerate = uploadedImages.length > 0 && getUserPrompt() && (options.visualized || options.flatSketch);
+  const canGenerate = uploadedImages.length > 0 && fullPrompt.trim() && (options.visualized || options.flatSketch);
 
   const handleSubmit = () => {
     if (canGenerate) {
       onGenerate({
         images: uploadedImages,
-        prompt: getUserPrompt(),
+        prompt: fullPrompt,
         options
       });
     }
@@ -289,59 +284,62 @@ export const SketchUploadForm = ({
             </div>
           </div>
 
-          {/* Prompt and Options Section */}
+          {/* Combined Prompt and Options Section - Single Box */}
           <div className="space-y-4">
-            {/* Header with "I want to make a" and checkboxes */}
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <span className="text-base font-bold italic text-gray-500">I want to make a</span>
-              
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => toggleOption('visualized')}
-                  disabled={isGenerating}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${
-                    options.visualized 
-                      ? 'border-primary bg-primary text-primary-foreground' 
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
-                  }`}
-                >
-                  <div className={`w-3 h-3 border rounded-sm flex items-center justify-center ${
-                    options.visualized ? 'border-white bg-white' : 'border-gray-400'
-                  }`}>
-                    {options.visualized && <Check className="h-2 w-2 text-primary" />}
-                  </div>
-                  <span>Visualized Image</span>
-                </button>
+            {/* Single unified card/box */}
+            <div className="border border-gray-300 rounded-lg overflow-hidden">
+              {/* Top section with "I want to make a" and checkboxes */}
+              <div className="flex items-center gap-4 px-4 py-3 bg-gray-50/50 border-b border-gray-200">
+                <span className="text-base font-bold italic text-gray-500">I want to make a</span>
                 
-                <button
-                  type="button"
-                  onClick={() => toggleOption('flatSketch')}
-                  disabled={isGenerating}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${
-                    options.flatSketch 
-                      ? 'border-primary bg-primary text-primary-foreground' 
-                      : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
-                  }`}
-                >
-                  <div className={`w-3 h-3 border rounded-sm flex items-center justify-center ${
-                    options.flatSketch ? 'border-white bg-white' : 'border-gray-400'
-                  }`}>
-                    {options.flatSketch && <Check className="h-2 w-2 text-primary" />}
-                  </div>
-                  <span>Flat sketch</span>
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => toggleOption('visualized')}
+                    disabled={isGenerating}
+                    className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${
+                      options.visualized 
+                        ? 'border-primary bg-primary text-primary-foreground' 
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                    }`}
+                  >
+                    <div className={`w-3 h-3 border rounded-sm flex items-center justify-center ${
+                      options.visualized ? 'border-white bg-white' : 'border-gray-400'
+                    }`}>
+                      {options.visualized && <Check className="h-2 w-2 text-primary" />}
+                    </div>
+                    <span>Visualized Image</span>
+                  </button>
+                  
+                  <button
+                    type="button"
+                    onClick={() => toggleOption('flatSketch')}
+                    disabled={isGenerating}
+                    className={`flex items-center gap-2 px-3 py-1.5 text-sm border rounded-md transition-all ${
+                      options.flatSketch 
+                        ? 'border-primary bg-primary text-primary-foreground' 
+                        : 'border-gray-300 bg-white text-gray-700 hover:border-primary/50'
+                    }`}
+                  >
+                    <div className={`w-3 h-3 border rounded-sm flex items-center justify-center ${
+                      options.flatSketch ? 'border-white bg-white' : 'border-gray-400'
+                    }`}>
+                      {options.flatSketch && <Check className="h-2 w-2 text-primary" />}
+                    </div>
+                    <span>Flat sketch</span>
+                  </button>
+                </div>
               </div>
-            </div>
-            
-            {/* Text input area */}
-            <div className="relative">
-              <Textarea
-                value={fullPrompt}
-                onChange={handlePromptChange}
-                className="min-h-[120px] resize-none border-gray-300 text-base placeholder:text-gray-400 focus:border-primary"
-                placeholder="Enter your design description here..."
-              />
+              
+              {/* Bottom section - Text input area without border */}
+              <div>
+                <Textarea
+                  value={fullPrompt}
+                  onChange={handlePromptChange}
+                  className="min-h-[120px] resize-none border-0 focus:ring-0 focus-visible:ring-0 text-base placeholder:text-gray-400 rounded-none"
+                  placeholder="Of this jacket combined in this fabric..."
+                />
+              </div>
             </div>
             
             <Button
@@ -365,7 +363,7 @@ export const SketchUploadForm = ({
           {!canGenerate && (
             <div className="text-sm text-red-500 space-y-1">
               {!uploadedImages.length && <div>• Please upload at least 1 image</div>}
-              {!getUserPrompt() && <div>• Please describe your design</div>}
+              {!fullPrompt.trim() && <div>• Please describe your design</div>}
               {!options.visualized && !options.flatSketch && <div>• Please select at least one generation option</div>}
             </div>
           )}
