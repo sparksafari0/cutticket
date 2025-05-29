@@ -1,7 +1,8 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Download } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
 import { GenerationResult } from '@/pages/GenerateSketch';
 import { ImageModal } from './ImageModal';
 
@@ -9,12 +10,14 @@ interface SketchResultsProps {
   results: GenerationResult;
   onStartOver: () => void;
   isGenerating: boolean;
+  onDelete?: () => void;
 }
 
 export const SketchResults = ({
   results,
   onStartOver,
-  isGenerating
+  isGenerating,
+  onDelete
 }: SketchResultsProps) => {
   const [modalImage, setModalImage] = useState<{ url: string; title: string } | null>(null);
 
@@ -37,7 +40,19 @@ export const SketchResults = ({
   return <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">✅ Generated Results</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl">✅ Generated Results</CardTitle>
+            {results.id && onDelete && (
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={onDelete}
+                className="bg-red-500 hover:bg-red-600 text-white"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
