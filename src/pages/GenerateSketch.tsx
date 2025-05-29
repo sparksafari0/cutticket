@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { GeneratedSketch, useGeneratedSketches } from '@/hooks/useGeneratedSketches';
 import DeleteConfirmationDialog from '@/components/project/DeleteConfirmationDialog';
+
 export interface GenerationOptions {
   visualized: boolean;
   flatSketch: boolean;
@@ -24,14 +25,14 @@ export interface GenerationResult {
   flatSketchImage?: string;
   originalPrompt: string;
 }
+
 const GenerateSketch = () => {
   const [results, setResults] = useState<GenerationResult | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const {
-    deleteSketch
-  } = useGeneratedSketches();
+  const { deleteSketch } = useGeneratedSketches();
+
   const handleGenerate = async (request: GenerationRequest) => {
     setIsGenerating(true);
     try {
@@ -57,14 +58,17 @@ const GenerateSketch = () => {
       setIsGenerating(false);
     }
   };
+
   const handleStartOver = () => {
     setResults(null);
     setShowForm(false);
   };
+
   const handleNewSketch = () => {
     setResults(null);
     setShowForm(true);
   };
+
   const handleSketchClick = (sketch: GeneratedSketch) => {
     setResults({
       id: sketch.id,
@@ -74,11 +78,14 @@ const GenerateSketch = () => {
     });
     setShowForm(false);
   };
+
   const handleDeleteClick = () => {
     setDeleteDialogOpen(true);
   };
+
   const handleDeleteConfirm = async () => {
     if (!results?.id) return;
+    
     try {
       await deleteSketch.mutateAsync(results.id);
       toast.success('Sketch deleted successfully');
@@ -89,6 +96,7 @@ const GenerateSketch = () => {
       setDeleteDialogOpen(false);
     }
   };
+
   return <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         {/* Header */}
@@ -122,7 +130,16 @@ const GenerateSketch = () => {
                   </Button>
                 </div>
                 
-                {results.id}
+                {results.id && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleDeleteClick}
+                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
               </div>
               <SketchResults results={results} onStartOver={handleStartOver} isGenerating={isGenerating} />
             </div> : showForm ? <div className="space-y-6">
@@ -139,8 +156,14 @@ const GenerateSketch = () => {
             </div>}
         </div>
 
-        <DeleteConfirmationDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDeleteConfirm} title={results?.originalPrompt || 'this sketch'} />
+        <DeleteConfirmationDialog
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+          onConfirm={handleDeleteConfirm}
+          title={results?.originalPrompt || 'this sketch'}
+        />
       </div>
     </div>;
 };
+
 export default GenerateSketch;
