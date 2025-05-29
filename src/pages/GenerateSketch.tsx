@@ -92,7 +92,7 @@ const GenerateSketch = () => {
         <div className="space-y-8">
           {results ? <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                <h2 className="text-lg sm:text-xl font-semibold">Generated Results</h2>
+                
                 <div className="flex flex-col sm:flex-row gap-2">
                   <Button variant="outline" onClick={handleNewSketch} className="text-sm bg-slate-900 hover:bg-slate-800 text-slate-50">
                     Generate New
