@@ -61,7 +61,6 @@ serve(async (req) => {
       formData.append('n', '1');
       formData.append('size', '1024x1536');
       formData.append('quality', 'high');
-      formData.append('response_format', 'b64_json');
       
       // Add images to form data
       imageBlobs.forEach((blob, index) => {
@@ -69,6 +68,11 @@ serve(async (req) => {
       });
 
       console.log('FormData for visualized image created with size: 1024x1536');
+      console.log('FormData entries:', Array.from(formData.entries()).map(([key, value]) => ({ 
+        key, 
+        valueType: typeof value,
+        valueSize: value instanceof File ? value.size : 'N/A'
+      })));
 
       const visualizedResponse = await fetch('https://api.openai.com/v1/images/edits', {
         method: 'POST',
@@ -145,7 +149,6 @@ serve(async (req) => {
       formData.append('n', '1');
       formData.append('size', '1024x1536');
       formData.append('quality', 'high');
-      formData.append('response_format', 'b64_json');
       
       // Add images to form data
       imagesToUse.forEach((blob, index) => {
@@ -153,6 +156,11 @@ serve(async (req) => {
       });
 
       console.log('FormData for flat sketch created with size: 1024x1536, images count:', imagesToUse.length);
+      console.log('FormData entries for flat sketch:', Array.from(formData.entries()).map(([key, value]) => ({ 
+        key, 
+        valueType: typeof value,
+        valueSize: value instanceof File ? value.size : 'N/A'
+      })));
 
       const sketchResponse = await fetch('https://api.openai.com/v1/images/edits', {
         method: 'POST',
