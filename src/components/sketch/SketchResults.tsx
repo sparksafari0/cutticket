@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,7 +58,7 @@ export const SketchResults = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {results.visualizedImage && <div className="space-y-2">
                   <h4 className="font-medium text-sm">Visualized Image</h4>
-                  <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-pointer" onClick={() => setModalImage({
+                  <div className="relative aspect-[2/3] bg-gray-100 rounded-lg overflow-hidden group cursor-pointer" onClick={() => setModalImage({
                 url: results.visualizedImage!,
                 title: 'Visualized Image'
               })}>
@@ -73,7 +74,7 @@ export const SketchResults = ({
               
               {results.flatSketchImage && <div className="space-y-2">
                   <h4 className="font-medium text-sm">Flat Sketch</h4>
-                  <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden group cursor-pointer" onClick={() => setModalImage({
+                  <div className="relative aspect-[2/3] bg-gray-100 rounded-lg overflow-hidden group cursor-pointer" onClick={() => setModalImage({
                 url: results.flatSketchImage!,
                 title: 'Flat Sketch'
               })}>
