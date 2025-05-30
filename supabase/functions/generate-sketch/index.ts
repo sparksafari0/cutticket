@@ -43,7 +43,7 @@ serve(async (req) => {
 
     // Generate visualized image if requested
     if (options.visualized) {
-      const visualizedPrompt = `Create a highly detailed, realistic photo of this clothing: ${prompt}.`;
+      const visualizedPrompt = `I want to make a highly detailed, realistic photo of: ${prompt}.`;
       
       const formData = new FormData();
       formData.append('model', 'gpt-image-1');
