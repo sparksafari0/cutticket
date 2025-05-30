@@ -6,9 +6,11 @@ import { useGeneratedSketches, GeneratedSketch } from '@/hooks/useGeneratedSketc
 import { toast } from 'sonner';
 import { ImageModal } from './ImageModal';
 import DeleteConfirmationDialog from '@/components/project/DeleteConfirmationDialog';
+
 interface SketchGalleryProps {
   onSketchClick?: (sketch: GeneratedSketch) => void;
 }
+
 export const SketchGallery = ({
   onSketchClick
 }: SketchGalleryProps) => {
@@ -23,11 +25,13 @@ export const SketchGallery = ({
   } | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sketchToDelete, setSketchToDelete] = useState<string | null>(null);
+
   const handleDeleteClick = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setSketchToDelete(id);
     setDeleteDialogOpen(true);
   };
+
   const handleDeleteConfirm = async () => {
     if (!sketchToDelete) return;
     try {
@@ -40,6 +44,7 @@ export const SketchGallery = ({
       setSketchToDelete(null);
     }
   };
+
   const downloadImage = (imageUrl: string, filename: string, e: React.MouseEvent) => {
     e.stopPropagation();
     const link = document.createElement('a');
@@ -49,6 +54,7 @@ export const SketchGallery = ({
     link.click();
     document.body.removeChild(link);
   };
+
   const handleImageClick = (imageUrl: string, title: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setModalImage({
@@ -56,10 +62,12 @@ export const SketchGallery = ({
       title
     });
   };
-  const getSketchTitle = (sketch: GeneratedSketch) => {
-    const sketchToDeleteData = sketches.find(s => s.id === sketchToDelete);
-    return sketchToDeleteData?.original_prompt || 'this sketch';
+
+  const getSketchTitle = () => {
+    const sketch = sketches.find(s => s.id === sketchToDelete);
+    return sketch?.original_prompt || 'this sketch';
   };
+
   if (isLoading) {
     return <div className="text-center py-8">Loading sketches...</div>;
   }
@@ -112,6 +120,6 @@ export const SketchGallery = ({
 
       {modalImage && <ImageModal isOpen={!!modalImage} onClose={() => setModalImage(null)} imageUrl={modalImage.url} title={modalImage.title} />}
 
-      <DeleteConfirmationDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDeleteConfirm} title={getSketchTitle(sketches.find(s => s.id === sketchToDelete) || sketches[0])} />
+      <DeleteConfirmationDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen} onConfirm={handleDeleteConfirm} title={getSketchTitle()} />
     </div>;
 };
