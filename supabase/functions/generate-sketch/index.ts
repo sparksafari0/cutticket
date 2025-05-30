@@ -27,6 +27,12 @@ serve(async (req) => {
       throw new Error('Missing required fields: images, prompt, and options are required');
     }
 
+    console.log('Request received:', { 
+      imagesCount: images.length, 
+      prompt: prompt.substring(0, 100) + '...', 
+      options 
+    });
+
     const results: any = {
       originalPrompt: prompt
     };
@@ -39,11 +45,15 @@ serve(async (req) => {
       })
     );
 
+    console.log('Image blobs prepared:', imageBlobs.map(blob => ({ size: blob.size, type: blob.type })));
+
     let visualizedImageBlob: Blob | null = null;
 
     // Generate visualized image if requested
     if (options.visualized) {
       const visualizedPrompt = `I want to make a highly detailed, realistic photo of: ${prompt}.`;
+      
+      console.log('Creating visualized image with prompt:', visualizedPrompt);
       
       const formData = new FormData();
       formData.append('model', 'gpt-image-1');
@@ -51,11 +61,14 @@ serve(async (req) => {
       formData.append('n', '1');
       formData.append('size', '1024x1536');
       formData.append('quality', 'high');
+      formData.append('response_format', 'b64_json');
       
       // Add images to form data
       imageBlobs.forEach((blob, index) => {
         formData.append('image[]', blob, `image_${index}.png`);
       });
+
+      console.log('FormData for visualized image created with size: 1024x1536');
 
       const visualizedResponse = await fetch('https://api.openai.com/v1/images/edits', {
         method: 'POST',
@@ -65,6 +78,8 @@ serve(async (req) => {
         body: formData,
       });
 
+      console.log('OpenAI API response status for visualized image:', visualizedResponse.status);
+
       if (!visualizedResponse.ok) {
         const errorData = await visualizedResponse.json();
         console.error('OpenAI API error for visualized image:', errorData);
@@ -72,18 +87,36 @@ serve(async (req) => {
       }
 
       const visualizedData = await visualizedResponse.json();
+      console.log('OpenAI API response for visualized image:', {
+        created: visualizedData.created,
+        dataLength: visualizedData.data?.length,
+        usage: visualizedData.usage,
+        hasB64Json: !!visualizedData.data?.[0]?.b64_json,
+        b64JsonLength: visualizedData.data?.[0]?.b64_json?.length
+      });
+
       // gpt-image-1 returns base64 data
       const base64Image = visualizedData.data[0].b64_json;
       results.visualizedImage = `data:image/png;base64,${base64Image}`;
 
-      // Convert base64 to blob for potential use in flat sketch
-      if (options.flatSketch) {
+      console.log('Visualized image base64 length:', base64Image.length);
+
+      // Validate image dimensions by creating a temporary image
+      try {
         const binaryString = atob(base64Image);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
+        console.log('Base64 decoded length:', binaryString.length);
+        
+        // Convert base64 to blob for potential use in flat sketch
+        if (options.flatSketch) {
+          const bytes = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          visualizedImageBlob = new Blob([bytes], { type: 'image/png' });
+          console.log('Visualized image blob created for flat sketch, size:', visualizedImageBlob.size);
         }
-        visualizedImageBlob = new Blob([bytes], { type: 'image/png' });
+      } catch (error) {
+        console.error('Error processing base64 image:', error);
       }
     }
 
@@ -96,11 +129,15 @@ serve(async (req) => {
         // If both options selected, use only the visualized image output and simplified prompt
         sketchPrompt = `Create a clean, technical flat sketch of this clothing design. Show it as a professional fashion flat drawing with clear lines, no shading, white background, technical illustration style.`;
         imagesToUse = [visualizedImageBlob];
+        console.log('Using visualized image for flat sketch');
       } else {
         // If only flat sketch selected, use original images and user prompt
         sketchPrompt = `Create a clean, technical flat sketch of this clothing design: ${prompt}. Show it as a professional fashion flat drawing with clear lines, no shading, white background, technical illustration style.`;
         imagesToUse = imageBlobs;
+        console.log('Using original images for flat sketch');
       }
+
+      console.log('Creating flat sketch with prompt:', sketchPrompt);
       
       const formData = new FormData();
       formData.append('model', 'gpt-image-1');
@@ -108,11 +145,14 @@ serve(async (req) => {
       formData.append('n', '1');
       formData.append('size', '1024x1536');
       formData.append('quality', 'high');
+      formData.append('response_format', 'b64_json');
       
       // Add images to form data
       imagesToUse.forEach((blob, index) => {
         formData.append('image[]', blob, `image_${index}.png`);
       });
+
+      console.log('FormData for flat sketch created with size: 1024x1536, images count:', imagesToUse.length);
 
       const sketchResponse = await fetch('https://api.openai.com/v1/images/edits', {
         method: 'POST',
@@ -122,6 +162,8 @@ serve(async (req) => {
         body: formData,
       });
 
+      console.log('OpenAI API response status for flat sketch:', sketchResponse.status);
+
       if (!sketchResponse.ok) {
         const errorData = await sketchResponse.json();
         console.error('OpenAI API error for flat sketch:', errorData);
@@ -129,9 +171,27 @@ serve(async (req) => {
       }
 
       const sketchData = await sketchResponse.json();
+      console.log('OpenAI API response for flat sketch:', {
+        created: sketchData.created,
+        dataLength: sketchData.data?.length,
+        usage: sketchData.usage,
+        hasB64Json: !!sketchData.data?.[0]?.b64_json,
+        b64JsonLength: sketchData.data?.[0]?.b64_json?.length
+      });
+
       // gpt-image-1 returns base64 data
       const base64Image = sketchData.data[0].b64_json;
       results.flatSketchImage = `data:image/png;base64,${base64Image}`;
+
+      console.log('Flat sketch image base64 length:', base64Image.length);
+
+      // Validate image dimensions
+      try {
+        const binaryString = atob(base64Image);
+        console.log('Flat sketch base64 decoded length:', binaryString.length);
+      } catch (error) {
+        console.error('Error processing flat sketch base64 image:', error);
+      }
     }
 
     // Save to database
@@ -154,7 +214,15 @@ serve(async (req) => {
       // Don't throw error, just log it - we still want to return the generated images
     } else {
       results.id = savedSketch.id;
+      console.log('Sketch saved to database with ID:', savedSketch.id);
     }
+
+    console.log('Returning results with:', {
+      id: results.id,
+      hasVisualizedImage: !!results.visualizedImage,
+      hasFlatSketchImage: !!results.flatSketchImage,
+      originalPrompt: results.originalPrompt.substring(0, 50) + '...'
+    });
 
     return new Response(JSON.stringify(results), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
