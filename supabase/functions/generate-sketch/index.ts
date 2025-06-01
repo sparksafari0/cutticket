@@ -60,7 +60,7 @@ serve(async (req) => {
       formData.append('prompt', visualizedPrompt);
       formData.append('n', '1');
       formData.append('size', '1024x1536');
-      formData.append('quality', 'high');
+      formData.append('quality', 'medium');
       
       // Add images to form data
       imageBlobs.forEach((blob, index) => {
@@ -148,7 +148,7 @@ serve(async (req) => {
       formData.append('prompt', sketchPrompt);
       formData.append('n', '1');
       formData.append('size', '1024x1536');
-      formData.append('quality', 'high');
+      formData.append('quality', 'medium');
       
       // Add images to form data
       imagesToUse.forEach((blob, index) => {
